@@ -3,15 +3,15 @@
 Welcome! This project is a simple turn-based game featuring various characters with unique abilities, maps with different effects, and dynamic weather conditions that influence gameplay.
 
 ## **Project Overview**
-The game is designed as a one-dimensional battlefield where two teams, each consisting of two characters, face off. The players can select their champions, map, and battle while observing the effects of maps, weather, and characters’ unique stats on gameplay.
+The game is designed as a two-dimensional battlefield where two teams, each consisting of two characters, face off. The players can select their champions, map, and battle while observing the effects of maps, weather, and characters’ unique stats on gameplay.
 
 ## **Repository Structure**
 ```plaintext
 root/
 ├── src/                  # Source code for the project
-│   ├── entities/         # Character and map-related classes 
+│   ├── entities/         # Character-related classes 
 │   ├── game/             # Core game logic
-│   ├── utilities/        # Utility functions and helpers (If needed)
+│   ├── utilities/        # Map, Weather, and other related environmental features
 │   └── main/             # Entry point of the application
 └── README.md             # Project overview and instructions
 ```
