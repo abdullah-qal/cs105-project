@@ -10,9 +10,7 @@ public abstract class Character {
     protected int healing; // Will be from 0 to 50 (tentative)
     protected boolean living_status; // true represents them being alive; false they are dead
 
-    public Character(String name, int position, double damage, double health, double defense, int movementSpeed,
-            int range) {
-        this.name = name;
+    public Character(int position, double damage, double health, double defense, int movementSpeed, int range) {
         this.position = position;
         this.damage = damage;
         this.health = health;
