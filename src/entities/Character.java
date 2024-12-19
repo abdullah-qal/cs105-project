@@ -1,7 +1,6 @@
 package entities;
 
 public abstract class Character {
-    protected String name;
     protected int position; // Will start off on either 0 or 1200 depending on the team.
     protected double damage; // Will be from 0 to 200 (tentative)
     protected double health; // Will be from 0 to 500 (tentative)
