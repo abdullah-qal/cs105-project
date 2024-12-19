@@ -1,58 +1,36 @@
 package entities;
-// Abstract base class for characters in the game
 
 public abstract class Character {
-    // This class serves as the blueprint for all character types (Assassin, Archer,
-    // Fighter, Healer)
-    // Subclasses should implement specific behaviors and properties for each
-    // character type
+    protected String name;
+    protected int position; // Will start off on either 0 or 1200 depending on the team.
+    protected double damage; // Will be from 0 to 200 (tentative)
+    protected double health; // Will be from 0 to 500 (tentative)
+    protected double defense; // Will be from 0 to 100 (tentative)
+    protected int movementSpeed; // Will be from 0 to 20 (tentative)
+    protected int range; // Will be from 0 to 50 (tentative)
+    protected int healing; // Will be from 0 to 50 (tentative)
+    protected boolean living_status; // true represents them being alive; false they are dead
 
-    // Attributes common to all characters
-    protected String name; // The character's name (e.g., Torva, Mortem)
-    protected int damage;
-    protected int health;
-    protected int armor;
-    protected int movementSpeed;
-    protected int range;
-    protected int healing; // Default to 0 unless it's a Healer
-
-    public Character(String name, int damage, int health, int armor, int movementSpeed, int range, int healing) {
+    public Character(String name, int position, double damage, double health, double defense, int movementSpeed,
+            int range) {
         this.name = name;
+        this.position = position;
         this.damage = damage;
         this.health = health;
-        this.armor = armor;
+        this.defense = defense;
         this.movementSpeed = movementSpeed;
         this.range = range;
-        this.healing = healing;
+        this.living_status = true;
     }
 
-    // Those will be the abstract methods you will be implementing for each
-    // character
-    public abstract void move(int distance); // Defines how the character moves
+    // public abstract void move(int distance);
+    // I think it's probably better to implement the above method in Game
+    protected abstract double calculateDamage(Character target, double bonusMultiplier); // Usually is the same as attack,
+                                                                                      // just in case there are other
+                                                                                      // attack methods, e.g.,
+                                                                                      // sneakAttack
 
-    public abstract void attack(Character target); // Defines how the character attacks
+    public abstract double attack(Character target); // How the character attacks, yields the pure DMG applied
 
-    public abstract void takeDamage(int damage); // Handles damage calculation
-
-    // Optional method for healing (default: no healing capability except for
-    // healers)
-    public void heal(Character ally) {
-        // Can be overridden if you are a healer
-        throw new UnsupportedOperationException("This character cannot heal.");
-    }
-
-    // Getter and Setter methods for subclasses. You can remove those if you want later on 
-    public String getName() {
-        return name;
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
-    }
-
-    // Add extra stuff here if you want
+    public abstract void takeDamage(int damage); // How the character takes damage, yields the net health loss
 }
