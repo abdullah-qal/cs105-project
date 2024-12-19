@@ -6,8 +6,8 @@ public abstract class Assassin extends Character {
     protected boolean stealth;
     protected double critRate, critDmg;
 
-    public Assassin(String name, int position, double damage, double health, double defense) {
-        super(name, position, damage, health, defense, 50, 10);
+    public Assassin(int position, double damage, double health, double defense) {
+        super(position, damage, health, defense, 50, 10);
         this.stealth = false; // If Assassin is currently in stealth-mode, enables sneakAttack method.
         this.critRate = 20; // between 0 to 100
         this.critDmg = 50;
@@ -26,9 +26,9 @@ public abstract class Assassin extends Character {
 
         double baseDamage = isCritRate ? damage * (1 + critDmg * 0.01) : damage;
         if (isCritRate) {
-            System.out.println(name + " landed a crit! It resulted in " + baseDamage + " dmg.");
+            System.out.println(this.getClass().getSimpleName() + " landed a crit! It resulted in " + baseDamage + " dmg.");
         } else {
-            System.out.println(name + " landed a normal hit yielding " + baseDamage + " dmg.");
+            System.out.println(this.getClass().getSimpleName()  + " landed a normal hit yielding " + baseDamage + " dmg.");
         }
 
         return baseDamage * bonusMultiplier;
@@ -41,13 +41,13 @@ public abstract class Assassin extends Character {
     public void takeDamage(int damage) {
         int mitigatedDamage = (int) (damage * (1 - defense * 0.01));
         this.health -= mitigatedDamage;
-        System.out.println(name + " takes " + mitigatedDamage + ". Their health now is " + health);
+        System.out.println(this.getClass().getSimpleName()  + " takes " + mitigatedDamage + ". Their health now is " + health);
     }
 
     // Assassin-specific methods
     public double sneakAttack(Character target) {
         double bonusMultiplier = 1.5; // Sneak attacks deal 50% more damage
-        System.out.println(name + " attempts a sneak attack!");
+        System.out.println(this.getClass().getSimpleName()  + " attempts a sneak attack!");
         return calculateDamage(target, bonusMultiplier);
     }
 }

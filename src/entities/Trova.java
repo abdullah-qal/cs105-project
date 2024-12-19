@@ -2,7 +2,7 @@ package entities;
 
 public class Trova extends Assassin {
     public Trova(String name, int position) {
-        super(name, position, 50, 150, 25);
+        super(position, 50, 150, 25);
     }
 }
 
