@@ -23,7 +23,10 @@ public class Game {
                     clearScreen();
                     gameCommences(team1, team2);
                 }
-                case "n" -> System.out.println("Maybe another time!");
+                case "n" -> {
+                    System.out.println("Maybe another time!");
+                    return;
+                }
                 default -> System.out.println("Invalid input. Please try again.");
             }
         }
@@ -48,7 +51,35 @@ public class Game {
             if (!team1.isTeamAlive()) {
                 System.out.println("Team 2 wins!");
             }
+            clearScreen();
             turn++;
+            System.out.println("The turn has concluded! The following is the current state of the game:");
+            System.out.println("Team 1:\n");
+            System.out.println(team1.getChar1().getClass().getSimpleName() + " - " + team1.getChar1().getHealth() + "HP"
+                    + " - " + team1.getChar1().getPosition() + "m");
+            System.out.println(
+                    team1.getChar2().getClass().getSimpleName() + " - " + team1.getChar2().getHealth() + "HP" + " - "
+                            + team1.getChar2().getPosition() + "m");
+            System.out.println("Team 2:\n");
+            System.out.println(team2.getChar1().getClass().getSimpleName() + " - " + team2.getChar1().getHealth() + "HP"
+                    + " - " + team2.getChar1().getPosition() + "m");
+            System.out.println(
+                    team2.getChar2().getClass().getSimpleName() + " - " + team2.getChar2().getHealth() + "HP" + " - "
+                            + team2.getChar2().getPosition() + "m");
+            System.out.println("\nWould you like to continue? (y/n)");
+            while (true) {
+                switch (input.nextLine().toLowerCase()) {
+                    case "y" -> {
+                        clearScreen();
+                        break;
+                    }
+                    case "n" -> {
+                        System.out.println("Thanks for playing!");
+                        return;
+                    }
+                    default -> System.out.println("Invalid input. Please try again.");
+                }
+            }
         }
     }
 
