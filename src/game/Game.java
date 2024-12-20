@@ -6,21 +6,30 @@ import entities.Assassin;
 
 public class Game {
 
+    // Starts the game
     public static void startGame() {
         Scanner input = new Scanner(System.in);
-
+        clearScreen();
         System.out.println("Welcome! Would you like to start a new game? (y/n)");
-        if (input.nextLine().equalsIgnoreCase("y")) {
-            System.out.println("Team 1, please select your characters.");
-            Team team1 = Team.createTeam(input, 0);
-            System.out.println("Team 2, please select your characters.");
-            Team team2 = Team.createTeam(input, 1200);
-            gameCommences(team1, team2);
-        } else {
-            System.out.println("Maybe another time!");
+        while (true) {
+            switch (input.nextLine().toLowerCase()) {
+                case "y" -> {
+                    clearScreen();
+                    System.out.println("Team 1, please select your characters.");
+                    Team team1 = Team.createTeam(input, 0);
+                    clearScreen();
+                    System.out.println("Team 2, please select your characters.");
+                    Team team2 = Team.createTeam(input, 1200);
+                    clearScreen();
+                    gameCommences(team1, team2);
+                }
+                case "n" -> System.out.println("Maybe another time!");
+                default -> System.out.println("Invalid input. Please try again.");
+            }
         }
     }
 
+    // Manages the game loop
     public static void gameCommences(Team team1, Team team2) {
         Scanner input = new Scanner(System.in);
         int turn = 1;
@@ -34,17 +43,16 @@ public class Game {
                 System.out.println("Team 1 wins!");
                 break;
             }
-
             System.out.println("Team 2 to play.");
             takeTurn(input, team2, team1, -1);
             if (!team1.isTeamAlive()) {
                 System.out.println("Team 2 wins!");
             }
-
             turn++;
         }
     }
 
+    // Manages turns in the game
     private static void takeTurn(Scanner input, Team currentTeam, Team opponentTeam, int direction) {
         entities.Character selectedChar = selectCharacter(input, currentTeam);
         performAction(input, selectedChar, opponentTeam, direction);
@@ -55,11 +63,22 @@ public class Game {
         System.out.println("(1) " + team.getChar1().getClass().getSimpleName());
         System.out.println("(2) " + team.getChar2().getClass().getSimpleName());
 
-        int choice = input.nextInt();
-        input.nextLine();
-        return choice == 1 ? team.getChar1() : team.getChar2();
+        while (true) {
+            String choice = input.nextLine();
+
+            switch (choice) {
+                case "1" -> {
+                    return team.getChar1();
+                }
+                case "2" -> {
+                    return team.getChar2();
+                }
+                default -> System.out.println("Invalid choice. Try again.");
+            }
+        }
     }
 
+    // Performs an action based on the user's choice
     private static void performAction(Scanner input, entities.Character character, Team opponentTeam, int direction) {
         boolean validAction = false;
 
@@ -89,6 +108,7 @@ public class Game {
         }
     }
 
+    // Attempts to perform an attack on the target character
     private static boolean attemptAttack(entities.Character attacker, entities.Character target, Scanner input) {
         if (!target.isLiving_status()) {
             System.out.println(target.getClass().getSimpleName() + " is already dead!");
@@ -103,6 +123,7 @@ public class Game {
             }
             return true;
         }
+        clearScreen();
         System.out.println("Target is out of range! Move closer to attack.");
         return false;
     }
@@ -112,5 +133,10 @@ public class Game {
         if (character instanceof Assassin) {
             System.out.println("Which of the following special moves would you like to perform?");
         }
+    }
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush(); // Just for flushing the output and making it look nicer
     }
 }
