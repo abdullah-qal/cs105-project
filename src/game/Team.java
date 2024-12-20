@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Team {
     private entities.Character char1, char2;
-
+        
     Team(entities.Character char1, entities.Character char2) {
         this.char1 = char1;
         this.char2 = char2;
@@ -35,4 +35,9 @@ public class Team {
     public entities.Character getChar2() {
         return char2;
     }
+
+    public boolean isTeamAlive() {
+        return char1.isLiving_status() || char2.isLiving_status();
+    }
 }
+    
