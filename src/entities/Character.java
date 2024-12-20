@@ -19,9 +19,6 @@ public abstract class Character {
         this.range = range;
         this.living_status = true;
     }
-
-    // public abstract void move(int distance);
-    // I think it's probably better to implement the above method in Game
     protected abstract double calculateDamage(Character target, double bonusMultiplier); // Usually is the same as attack,
                                                                                       // just in case there are other
                                                                                       // attack methods, e.g.,
@@ -43,10 +40,6 @@ public abstract class Character {
         return damage;
     }
 
-    public void setDamage(double damage) {
-        this.damage = damage;
-    }
-
     public double getHealth() {
         return health;
     }
@@ -59,39 +52,25 @@ public abstract class Character {
         return defense;
     }
 
-    public void setDefense(double defense) {
-        this.defense = defense;
-    }
-
     public int getMovementSpeed() {
         return movementSpeed;
-    }
-
-    public void setMovementSpeed(int movementSpeed) {
-        this.movementSpeed = movementSpeed;
     }
 
     public int getRange() {
         return range;
     }
 
-    public void setRange(int range) {
-        this.range = range;
-    }
-
     public int getHealing() {
         return healing;
     }
 
-    public void setHealing(int healing) {
-        this.healing = healing;
-    }
-
     public boolean isLiving_status() {
         return living_status;
+    }  
+    
+    public static void moveCharacter(entities.Character character, int direction) {
+        int newPosition = character.getPosition() + (character.getMovementSpeed() * direction);
+        character.setPosition(newPosition);
+        System.out.println(character.getClass().getName() + " has moved to position: " + newPosition);
     }
-
-    public void setLiving_status(boolean living_status) {
-        this.living_status = living_status;
-    }    
 }

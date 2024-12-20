@@ -19,11 +19,6 @@ public abstract class Assassin extends Character {
         double randomValue = random.nextDouble() * 100; // Random number between 0 and 100
         boolean isCritRate = randomValue < critRate; // Checks if crit rate happens
 
-        if (!(Math.abs(position - target.position) < range)) { // Check if target is within range
-            System.out.println("Character is not within range! Try to move closer.");
-            return 0;
-        }
-
         double baseDamage = isCritRate ? damage * (1 + critDmg * 0.01) : damage;
         if (isCritRate) {
             System.out.println(this.getClass().getSimpleName() + " landed a crit! It resulted in " + baseDamage + " dmg.");
@@ -41,6 +36,10 @@ public abstract class Assassin extends Character {
     public void takeDamage(int damage) {
         int mitigatedDamage = (int) (damage * (1 - defense * 0.01));
         this.health -= mitigatedDamage;
+        if (health <= 0) {
+            health = 0;
+            living_status = false;
+        }
         System.out.println(this.getClass().getSimpleName()  + " takes " + mitigatedDamage + ". Their health now is " + health);
     }
 
