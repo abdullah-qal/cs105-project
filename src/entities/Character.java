@@ -30,4 +30,68 @@ public abstract class Character {
     public abstract double attack(Character target); // How the character attacks, yields the pure DMG applied
 
     public abstract void takeDamage(int damage); // How the character takes damage, yields the net health loss
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
+
+    public double getDamage() {
+        return damage;
+    }
+
+    public void setDamage(double damage) {
+        this.damage = damage;
+    }
+
+    public double getHealth() {
+        return health;
+    }
+
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    public double getDefense() {
+        return defense;
+    }
+
+    public void setDefense(double defense) {
+        this.defense = defense;
+    }
+
+    public int getMovementSpeed() {
+        return movementSpeed;
+    }
+
+    public void setMovementSpeed(int movementSpeed) {
+        this.movementSpeed = movementSpeed;
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void setRange(int range) {
+        this.range = range;
+    }
+
+    public int getHealing() {
+        return healing;
+    }
+
+    public void setHealing(int healing) {
+        this.healing = healing;
+    }
+
+    public boolean isLiving_status() {
+        return living_status;
+    }
+
+    public void setLiving_status(boolean living_status) {
+        this.living_status = living_status;
+    }    
 }
