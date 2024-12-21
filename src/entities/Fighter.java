@@ -8,7 +8,7 @@ public abstract class Fighter extends Character{
     protected boolean anger;
 
     public Fighter(int position,double damage,double health,double maxHealth,double defense){
-        super(position, damage, health, maxHealth,defense, 15, 50, 20, 50);//We want to ensure that the crit rate for fighters will be less than assassins but their crit damage will be more than assassins.
+        super(position, damage, health, maxHealth,defense, 40, 10, 10, 50);//We want to ensure that the crit rate for fighters will be less than assassins but their crit damage will be more than assassins.
         this.anger=false // If fighter is in anger mode, enables anger mode which increases it's defense.
     }
     protected double calculateDamage(Character target, double bonusMultiplier) {
