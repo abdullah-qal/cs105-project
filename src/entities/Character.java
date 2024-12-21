@@ -4,7 +4,7 @@ package entities;
 import game.*;
 
 public abstract class Character {
-    protected int position; // Will start off on either 0 or 1200 depending on the team.
+    protected int position; // Will start off on either 0 or 200 depending on the team.
     protected double damage; // Will be from 0 to 200 (tentative)
     protected double health; // Will be from 0 to 500 (tentative)
     protected double defense; // Will be from 0 to 100 (tentative)
@@ -29,7 +29,7 @@ public abstract class Character {
 
     public abstract double attack(Character target); // How the character attacks, yields the pure DMG applied
 
-    public abstract void takeDamage(int damage); // How the character takes damage, yields the net health loss
+    public abstract void takeDamage(double damage); // How the character takes damage, yields the net health loss
 
     public int getPosition() {
         return position;
@@ -75,6 +75,6 @@ public abstract class Character {
         int newPosition = character.getPosition() + (character.getMovementSpeed() * direction);
         character.setPosition(newPosition);
         Game.clearScreen();
-        System.out.println(character.getClass().getSimpleName() + " has moved to position: " + newPosition);
+        System.out.println(character.getClass().getSimpleName() + " has moved to position: " + newPosition + "\n");
     }
 }

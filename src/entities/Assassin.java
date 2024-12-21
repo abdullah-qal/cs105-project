@@ -33,8 +33,8 @@ public abstract class Assassin extends Character {
         return calculateDamage(target, 1); // No bonus multiplier for a regular attack
     }
 
-    public void takeDamage(int damage) {
-        int mitigatedDamage = (int) (damage * (1 - defense * 0.01));
+    public void takeDamage(double damage) {
+        double mitigatedDamage = damage * (1 - defense * 0.01);
         this.health -= mitigatedDamage;
         if (health <= 0) {
             health = 0;
