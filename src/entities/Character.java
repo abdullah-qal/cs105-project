@@ -2,9 +2,6 @@ package entities;
 // TODO: Clean up this class and implement all the subclasses of Character
 
 import game.*;
-// TODO: Clean up this class and implement all the subclasses of Character
-
-import game.*;
 
 public abstract class Character {
     protected int position; // Will start off on either 0 or 200 depending on the team.
@@ -74,7 +71,6 @@ public abstract class Character {
         return living_status;
     }  
     
-    public static void moveCharacter(Character character, int direction) {
     public static void moveCharacter(Character character, int direction) {
         int newPosition = character.getPosition() + (character.getMovementSpeed() * direction);
         character.setPosition(newPosition);
