@@ -10,6 +10,10 @@ public class CharacterFactory {
                 return new Mortem(position);
             case "trova":
                 return new Trova(position);
+            case "sanita":
+                return new Sanita(position);
+            case "nutrix":
+                return new Nutrix(position);
             default:
                 throw new IllegalArgumentException("Invalid character: " + name);
         }
