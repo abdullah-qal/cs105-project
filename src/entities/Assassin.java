@@ -2,15 +2,14 @@ package entities;
 
 import java.util.Random;
 
+import game.Game;
+
 public abstract class Assassin extends Character {
     protected boolean stealth;
-    protected double critRate, critDmg;
-
-    public Assassin(int position, double damage, double health, double defense) {
-        super(position, damage, health, defense, 50, 10);
+    
+    public Assassin(int position, double damage, double health, double maxHealth, double defense) {
+        super(position, damage, health, maxHealth,defense, 30, 10, 20, 50);
         this.stealth = false; // If Assassin is currently in stealth-mode, enables sneakAttack method.
-        this.critRate = 20; // between 0 to 100
-        this.critDmg = 50;
     }
 
     // Basic methods from Character
@@ -21,8 +20,10 @@ public abstract class Assassin extends Character {
 
         double baseDamage = isCritRate ? damage * (1 + critDmg * 0.01) : damage;
         if (isCritRate) {
+            Game.clearScreen();
             System.out.println(this.getClass().getSimpleName() + " landed a crit! It resulted in " + baseDamage + " dmg.");
         } else {
+            Game.clearScreen();
             System.out.println(this.getClass().getSimpleName()  + " landed a normal hit yielding " + baseDamage + " dmg.");
         }
 
@@ -40,13 +41,20 @@ public abstract class Assassin extends Character {
             health = 0;
             living_status = false;
         }
-        System.out.println(this.getClass().getSimpleName()  + " takes " + mitigatedDamage + ". Their health now is " + health);
+        System.out.println(this.getClass().getSimpleName()  + " takes " + mitigatedDamage + " HP loss as result. Their health now is " + health);
     }
 
     // Assassin-specific methods
+    // Sneak attack deals 50% more damage than a regular attack, and can only be used if the Assassin is in stealth-mode.
     public double sneakAttack(Character target) {
         double bonusMultiplier = 1.5; // Sneak attacks deal 50% more damage
         System.out.println(this.getClass().getSimpleName()  + " attempts a sneak attack!");
         return calculateDamage(target, bonusMultiplier);
+    }
+    public void setStealth(boolean stealth) {
+        this.stealth = stealth;
+    }
+    public boolean isStealth() {
+        return stealth;
     }
 }
