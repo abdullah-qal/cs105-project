@@ -14,6 +14,14 @@ public class CharacterFactory {
                 return new Sanita(position);
             case "nutrix":
                 return new Nutrix(position);
+            case "sagitta":
+                return new Sagitta(position);
+            case "cito":   
+                return new Cito(position);
+            case "ursi": 
+                return new Ursi(position);
+            case "tigris":
+                return new Tigris(position);
             default:
                 throw new IllegalArgumentException("Invalid character: " + name);
         }
