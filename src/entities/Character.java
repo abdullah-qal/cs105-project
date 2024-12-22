@@ -1,4 +1,7 @@
 package entities;
+
+import java.util.Random;
+
 // TODO: Clean up this class and implement all the subclasses of Character
 // TODO: Fix the order of the consturctors' parameters in the subclasses and make them uniform
 import game.*;
@@ -14,8 +17,10 @@ public abstract class Character {
     protected int healing; // Will be from 0 to 50 (tentative)
     protected boolean living_status; // true represents them being alive; false they are dead
     protected double critRate, critDmg;
+    protected int coolDown;
 
-    public Character(int position, double damage, double health,double maxHealth, double defense, int movementSpeed, int range,
+    public Character(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
+            int range,
             double critRate, double critDmg) {
         this.position = position;
         this.damage = damage;
@@ -27,16 +32,60 @@ public abstract class Character {
         this.critRate = critRate;
         this.critDmg = critDmg;
         this.living_status = true;
+        this.coolDown = 0;
     }
 
-    public static final String[] SUPPORTED_CHARACTERS = {"Mortem", "Trova", "Sanita", "Nutrix"};
+    // Defines movement of characters
+    public static boolean moveCharacter(Character character, int direction) {
+        int newPosition = character.getPosition() + (character.movementSpeed * direction);
+        if (newPosition < 0 || newPosition > 200) {
+            Game.clearScreen();
+            System.out.println("You can't move out of the bounds of the field. Try again.\n");
+            return false;
+        }
+        character.setPosition(newPosition);
+        Game.clearScreen();
+        System.out.println(character.getClass().getSimpleName() + " has moved to position: " + newPosition + "\n");
+        return true;
+    }
 
-    protected abstract double calculateDamage(Character target, double bonusMultiplier); // Calculates pure DMG applied
+    // Outgoing DMG calculator from any sort of attack with a specified bonus multiplier
+    protected double calculateDamage(Character target, double bonusMultiplier) { //
+        Random random = new Random();
+        double randomValue = random.nextDouble() * 100; // Random number between 0 and 100
+        boolean isCritRate = randomValue < critRate; // Checks if crit rate happens
 
-    public abstract double attack(Character target); // How the character attacks, yields the pure DMG applied
+        double baseDamage = isCritRate ? damage * (1 + critDmg * 0.01) : damage;
+        if (isCritRate) {
+            Game.clearScreen();
+            System.out.println(
+                    this.getClass().getSimpleName() + " landed a crit! It resulted in " + baseDamage + " dmg.");
+        } else {
+            Game.clearScreen();
+            System.out
+                    .println(this.getClass().getSimpleName() + " landed a normal hit yielding " + baseDamage + " dmg.");
+        }
 
-    public abstract void takeDamage(double damage); // How the character takes damage, yields the net health loss
+        return baseDamage * bonusMultiplier;
+    }
 
+    // Regular attack without any additional DMG bonus
+    public double attack(Character target) {
+        return calculateDamage(target, 1);
+    }
+    // Incoming DMG calculator
+    public void takeDamage(double damage) { 
+        double mitigatedDamage = damage * (1 - defense * 0.01);
+        this.health -= mitigatedDamage;
+        if (health <= 0) {
+            health = 0;
+            living_status = false;
+        }
+        System.out.println(this.getClass().getSimpleName() + " takes " + mitigatedDamage
+                + " HP loss as result. Their health now is " + health +"\n");
+    }
+
+    // Getters and Setters
     public int getPosition() {
         return position;
     }
@@ -48,9 +97,11 @@ public abstract class Character {
     public int getRange() {
         return range;
     }
+
     public double getMaxHealth() {
         return maxHealth;
     }
+
     public boolean isLiving_status() {
         return living_status;
     }
@@ -63,16 +114,17 @@ public abstract class Character {
         this.health = health;
     }
 
-    public static boolean moveCharacter(Character character, int direction) {
-        int newPosition = character.getPosition() + (character.movementSpeed * direction);
-        if (newPosition < 0 || newPosition > 200) {
-            Game.clearScreen();
-            System.out.println("You can't move out of the bounds of the field. Try again.");
-            return false;
+    public int getCoolDown() {
+        return coolDown;
+    }
+
+    public void setCoolDown(int coolDown) {
+        this.coolDown = coolDown;
+    }
+
+    public void decrementCooldown() {
+        if (coolDown > 0) {
+            coolDown--;
         }
-        character.setPosition(newPosition);
-        Game.clearScreen();
-        System.out.println(character.getClass().getSimpleName() + " has moved to position: " + newPosition + "\n");
-        return true;
     }
 }
