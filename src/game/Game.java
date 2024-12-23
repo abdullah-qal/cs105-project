@@ -19,9 +19,19 @@ public class Game {
                 case "y" -> {
                     clearScreen();
                     System.out.println("Team 1, please select your characters.\n");
+                    System.out.println("The currently supported characters are: \n");
+                    System.out.println("Assassins: Mortem, Trova");
+                    System.out.println("Archers: Cito, Sagitta");
+                    System.out.println("Fighters: Tigris, Ursi");
+                    System.out.println("Healers: Nutrix, Sanita\n");
                     Team team1 = Team.createTeam(input, 0);
                     clearScreen();
                     System.out.println("Team 2, please select your characters.\n");
+                    System.out.println("The currently supported characters are: \n");
+                    System.out.println("Assassins: Mortem, Trova");
+                    System.out.println("Archers: Cito, Sagitta");
+                    System.out.println("Fighters: Tigris, Ursi");
+                    System.out.println("Healers: Nutrix, Sanita\n");
                     Team team2 = Team.createTeam(input, 200);
                     clearScreen();
                     gameCommences(team1, team2);
@@ -100,7 +110,6 @@ public class Game {
                     + team.getChar1().getClass().getSuperclass().getSimpleName() + ")");
             System.out.println("(2) " + team.getChar2().getClass().getSimpleName() + " (" +
                     team.getChar2().getClass().getSuperclass().getSimpleName() + ")");
-
             String choice = input.nextLine();
             clearScreen();
             switch (choice) {
@@ -134,6 +143,7 @@ public class Game {
             System.out.println("(3) Attack " + opponentTeam.getChar1().getClass().getSimpleName());
             System.out.println("(4) Attack " + opponentTeam.getChar2().getClass().getSimpleName());
             System.out.println("(5) Perform a special ability");
+            System.out.println("(6) Retrieve current stats about a character");
 
             String choice = input.nextLine();
             switch (choice) {
@@ -166,6 +176,11 @@ public class Game {
                         return;
                     }
                 }
+                case "6" -> {
+                    clearScreen();
+                    if (retrieveInfo(input, character, allyTeam, opponentTeam)) {
+                    }
+                }
                 default -> {
                     clearScreen();
                     System.out.println("Invalid choice. Please select a valid input.\n");
@@ -175,6 +190,49 @@ public class Game {
     }
 
     // ------------------UTILITY METHODS------------------//
+    private static boolean retrieveInfo(Scanner input, entities.Character character, Team allyTeam, Team opponentTeam) {
+        while (true) {
+            entities.Character teamMate = allyTeam.getChar1() != character ? allyTeam.getChar1() : allyTeam.getChar2();
+
+            System.out.println("Which character's stats would you like to view?");
+            System.out.println("(1) Myself");
+            System.out.println("(3) My team's " + teamMate.getClass().getSimpleName());
+            System.out.println("(4) " + opponentTeam.getChar1().getClass().getSimpleName());
+            System.out.println("(5) " + opponentTeam.getChar2().getClass().getSimpleName());
+            System.out.println("(6) Return to action menu");
+
+            String choice = input.nextLine();
+            clearScreen();
+            switch (choice) {
+                case "1" -> {
+                    displayCharacterStats(input, character);
+                    return true;
+                }
+                case "2" -> {
+                    displayCharacterStats(input, allyTeam.getChar1());
+                    return true;
+                }
+                case "3" -> {
+                    displayCharacterStats(input, allyTeam.getChar2());
+                    return true;
+                }
+                case "4" -> {
+                    displayCharacterStats(input, opponentTeam.getChar1());
+                    return true;
+                }
+                case "5" -> {
+                    displayCharacterStats(input, opponentTeam.getChar2());
+                    return true;
+                }
+                case "6" -> {
+                    return false;
+                }
+                default -> {
+                    System.out.println("Invalid choice. Please select a valid input.\n");
+                }
+            }
+        }
+    }
 
     private static boolean performSpecialAbility(Scanner input, entities.Character character, Team allyTeam,
             Team opponentTeam) {
@@ -387,6 +445,21 @@ public class Game {
                 team2.getChar2().getClass().getSimpleName() + " - " + team2.getChar2().getHealth() + "HP" + " - "
                         + team2.getChar2().getPosition() + "m\n");
         System.out.println("Would you like to continue? (y/n)");
+    }
+
+    // Displays the current stats of a character
+    private static void displayCharacterStats(Scanner input, entities.Character character) {
+        System.out.println("Current stats of " + character.getClass().getSimpleName() + ":\n");
+        System.out.println("Current Position: " + character.getPosition() + " m");
+        System.out.println("Health: " + character.getHealth() + "/" + character.getMaxHealth() + " HP");
+        System.out.println("Damage: " + character.getDamage() + " DMG");
+        System.out.println("Defense: " + character.getDefense() + " DEF");
+        System.out.println("Movement Speed: " + character.getMovementSpeed() + " m/turn");
+        System.out.println("Range: " + character.getRange() + " m");
+        System.out.println("Crit Rate: " + character.getCritRate() + "%");
+        System.out.println("Crit Damage: " + character.getCritDmg() + "%");
+        System.out.println("Living Status: " + (character.isLiving_status() ? "Alive" : "Dead"));
+        System.out.println("Cooldown: " + character.getCoolDown() + " turns\n");
     }
 
     // Reduces the cooldown of the character if they recently activated a special
