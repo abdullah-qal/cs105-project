@@ -97,7 +97,7 @@ public abstract class Character {
     }
 
     // Attempts to attack the target character
-    private static boolean attemptAttack(entities.Character attacker, entities.Character target) {
+    public static boolean attemptAttack(entities.Character attacker, entities.Character target) {
         if (!target.isLiving_status()) {
             Game.clearScreen();
             System.out.println(target.getClass().getSimpleName() + " is already dead!\n");
