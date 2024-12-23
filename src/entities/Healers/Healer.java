@@ -1,26 +1,40 @@
-package entities;
+package entities.Healers;
 
 import java.util.Random;
 
+import entities.Character;
 import game.Game;
 
 public abstract class Healer extends Character {
-    protected double healRate;
+    protected double healAmount;
     protected double divineHealChance;
 
-    public Healer(int position, double health, double maxHealth, double healRate, double divineHealChance) {
-        super(position, 20, health, maxHealth, 5, 15, 30, 0, 0);
-        this.healRate = healRate; // regular healing rate
-        this.divineHealChance = divineHealChance; // chance of divine heal. Heals triple the amount.
+    public Healer(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
+            int range, double critRate, double critDmg, double healAmount, double divineHealChance) {
+        super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
+       this.healAmount = healAmount;
+       this.divineHealChance = divineHealChance;
     }
 
     // Healer-specific methods
-    public void heal(Character target) {
+    public boolean heal(Character target) {
         Random random = new Random();
         double randomValue = random.nextDouble() * 100; // Random number between 0 and 100
         boolean isDivineHeal = randomValue < divineHealChance; // Checks if divine heal happens
-
-        double baseHeal = isDivineHeal ? healRate * 3 : healRate;
+        if (!target.isLiving_status()){
+            System.out.println("You can't heal a dead character. Try again.\n");
+            return false;
+        }
+        if(this.range < Math.abs(this.position - target.getPosition())){
+            System.out.println(target.getClass().getSimpleName() + " is too far away to be healed!");
+            return false;
+        }
+        double baseHeal = isDivineHeal ? healAmount * 1.75 : healAmount;
+        if (target.getHealth() + baseHeal > target.getMaxHealth()) {
+            target.setHealth(target.getMaxHealth());
+        } else {
+            target.setHealth(target.getHealth() + baseHeal);
+        }
         if (isDivineHeal) {
             Game.clearScreen();
 
@@ -45,10 +59,6 @@ public abstract class Healer extends Character {
                         + target.getHealth() + " HP\n");
             }
         }
-        if (target.getHealth() + baseHeal > target.getMaxHealth()) {
-            target.setHealth(target.getMaxHealth());
-            return;
-        }
-        target.setHealth(target.getHealth() + baseHeal);
+        return true;
     }
 }

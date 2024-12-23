@@ -1,13 +1,15 @@
-package entities;
+package entities.Assassins;
 
+import entities.Character;
 import game.Game;
 
 public abstract class Assassin extends Character {
     protected boolean stealth;
 
-    public Assassin(int position, double damage, double health, double maxHealth, double defense) {
-        super(position, damage, health, maxHealth, defense, 30, 10, 20, 50);
-        this.stealth = false; // If Assassin is currently in stealth-mode, enables sneakAttack method.
+    public Assassin(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
+            int range, double critRate, double critDmg) {
+        super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
+        stealth = false;
     }
 
     // Assassin-specific methods

@@ -1,11 +1,13 @@
-package entities;
+package entities.Fighters;
+
+import entities.Character;
 
 public abstract class Fighter extends Character {
     protected boolean anger;
-
-    public Fighter(int position, double damage, double health, double maxHealth, double defense, int movementSpeed) {
-        super(position, damage, health, maxHealth, defense, movementSpeed, 10, 10, 70);
-        this.anger = false; // If fighter is in rage, its defense will increase
+    public Fighter(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
+            int range, double critRate, double critDmg) {
+        super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
+        anger = false;
     }
 
     // Fighter-specific methods

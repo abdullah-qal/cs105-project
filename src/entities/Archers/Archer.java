@@ -1,17 +1,18 @@
-package entities;
+package entities.Archers;
+
+import entities.Character;
 
 public abstract class Archer extends Character {
     protected boolean visionActive; // Whether vision skill is active or not.
 
-    public Archer(int position, double damage, int movementSpeed, double defense, int range) {
-        super(position, damage, 150, 150, defense, movementSpeed, range, 10, 30);
-        // Archers have lower crit rate (10%) and crit damage (30%) compared to
-        // Assassins and Fighters.
-        this.visionActive = false;
+    public Archer(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
+            int range, double critRate, double critDmg) {
+        super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
+        visionActive = false;
     }
 
     // Archer specific methods
-    // vision doubles Archer's range temporarily.
+    // Great Sight doubles Archer's range temporarily.
     public void activateVision() {
         if (!visionActive) {
             visionActive = true;
