@@ -2,43 +2,44 @@ package game;
 
 import java.util.Scanner;
 
-import entities.*;
+import entities.Archers.Archer;
+import entities.Assassins.Assassin;
+import entities.Fighters.Fighter;
+import entities.Healers.Healer;
 
 public class Game {
     // ------------------GAMEPLAY METHODS------------------//
     // Starts the game
     public static void startGame() {
         Scanner input = new Scanner(System.in);
-        clearScreen();
-        System.out.println("Welcome! Would you like to start a new game? (y/n)");
         while (true) {
-            switch (input.nextLine().toLowerCase()) {
+            System.out.println("Welcome! Would you like to start a new game? (y/n)");
+            System.out.println("If you want to see the supported characters with their stats and abilities, type 'I'");
+            switch (input.nextLine()) {
                 case "y" -> {
                     clearScreen();
-                    System.out.println(
-                            "Team 1, please select your characters. The currently supported characters are: \n");
-                    System.out.println("Assassins: Mortem, Trova");
-                    System.out.println("Archers: Cito, Sagitta");
-                    System.out.println("Fighters: Tigris, Ursi");
-                    System.out.println("Healers: Nutrix, Sanita\n");
+                    System.out.println("Team 1, please select your characters.\n");
                     Team team1 = Team.createTeam(input, 0);
                     clearScreen();
-                    System.out.println(
-                            "Team 2, please select your characters. The currently supported characters are:\n");
-                    System.out.println("Assassins: Mortem, Trova");
-                    System.out.println("Archers: Cito, Sagitta");
-                    System.out.println("Fighters: Tigris, Ursi");
-                    System.out.println("Healers: Nutrix, Sanita\n");
+                    System.out.println("Team 2, please select your characters.\n");
                     Team team2 = Team.createTeam(input, 200);
                     clearScreen();
                     gameCommences(team1, team2);
                     return;
                 }
                 case "n" -> {
+                    clearScreen();
                     System.out.println("Maybe another time!");
                     return;
                 }
-                default -> System.out.println("Invalid choice. Please select a valid input.");
+                case "I" -> {
+                    clearScreen();
+                    entities.CharacterInfo.getInfo(input);
+                }
+                default -> {
+                    clearScreen();
+                    System.out.println("Invalid choice. Please select a valid input.\n");
+                }
             }
         }
     }
@@ -48,19 +49,19 @@ public class Game {
         Scanner input = new Scanner(System.in);
         int turn = 1;
 
-        while (team1.isTeamAlive() && team2.isTeamAlive()) {
+        while (true) {
             System.out.println("|-------- TURN " + turn + " --------|");
 
             System.out.println("Team 1 to play.");
             takeTurn(input, team1, team2);
             if (!team2.isTeamAlive()) {
-                System.out.println("Team 1 wins!");
+                System.out.println("Team 1 wins! The game lasted for " + turn + " turns.");
                 break;
             }
             System.out.println("Team 2 to play.");
             takeTurn(input, team2, team1);
             if (!team1.isTeamAlive()) {
-                System.out.println("Team 2 wins!");
+                System.out.println("Team 2 wins! The game lasted for " + turn + " turns.");
             }
             reduceCooldown(team1.getChar1());
             reduceCooldown(team1.getChar2());
@@ -95,21 +96,28 @@ public class Game {
     private static entities.Character selectCharacter(Scanner input, Team team) {
         while (true) {
             System.out.println("Select a character:");
-            System.out.println("(1) " + team.getChar1().getClass().getSimpleName());
-            System.out.println("(2) " + team.getChar2().getClass().getSimpleName());
-            String choice = input.nextLine();
+            System.out.println("(1) " + team.getChar1().getClass().getSimpleName() + " ("
+                    + team.getChar1().getClass().getSuperclass().getSimpleName() + ")");
+            System.out.println("(2) " + team.getChar2().getClass().getSimpleName() + " (" +
+                    team.getChar2().getClass().getSuperclass().getSimpleName() + ")");
 
+            String choice = input.nextLine();
+            clearScreen();
             switch (choice) {
                 case "1" -> {
-                    clearScreen();
-                    return team.getChar1();
+                    if (team.getChar1().isLiving_status()) {
+                        return team.getChar1();
+                    }
+                    System.out.println(team.getChar1().getClass().getSimpleName()
+                            + " is already dead! Choose a different ability\n");
                 }
                 case "2" -> {
-                    clearScreen();
-                    return team.getChar2();
+                    if (team.getChar2().isLiving_status()) {
+                        return team.getChar2();
+                    }
+                    System.out.println(team.getChar2().getClass().getSimpleName() + " is already dead!\n");
                 }
                 default -> {
-                    clearScreen();
                     System.out.println("Invalid choice. Please select a valid input.\n");
                 }
             }
@@ -120,29 +128,34 @@ public class Game {
     private static void performAction(Scanner input, entities.Character character,
             Team allyTeam, Team opponentTeam) {
         while (true) {
-            printActionOptions(character, opponentTeam);
+            System.out.println("Choose an action for " + character.getClass().getSimpleName() + ":");
+            System.out.println("(1) Move to the right (Current position: " + character.getPosition() + "m)");
+            System.out.println("(2) Move to the left (Current position: " + character.getPosition() + "m)");
+            System.out.println("(3) Attack " + opponentTeam.getChar1().getClass().getSimpleName());
+            System.out.println("(4) Attack " + opponentTeam.getChar2().getClass().getSimpleName());
+            System.out.println("(5) Perform a special ability");
 
             String choice = input.nextLine();
             switch (choice) {
                 case "1" -> {
-                    if (entities.Character.moveCharacter(character, 1)) {
+                    if (entities.Character.moveCharacter(input, character, 1)) {
                         return;
                     }
                 }
                 case "2" -> {
-                    if (entities.Character.moveCharacter(character, -1)) {
+                    if (entities.Character.moveCharacter(input, character, -1)) {
                         return;
                     }
                 }
                 case "3" -> {
-                    if (attemptAttack(character, opponentTeam.getChar1())) {
+                    if (entities.Character.attemptAttack(character, opponentTeam.getChar1())) {
                         double dmg = character.attack(opponentTeam.getChar1());
                         opponentTeam.getChar1().takeDamage(dmg);
                         return;
                     }
                 }
                 case "4" -> {
-                    if (attemptAttack(character, opponentTeam.getChar2())) {
+                    if (entities.Character.attemptAttack(character, opponentTeam.getChar2())) {
                         double dmg = character.attack(opponentTeam.getChar2());
                         opponentTeam.getChar2().takeDamage(dmg);
                         return;
@@ -162,20 +175,6 @@ public class Game {
     }
 
     // ------------------UTILITY METHODS------------------//
-    // Attempts to attack the target character
-    private static boolean attemptAttack(entities.Character attacker, entities.Character target) {
-        if (!target.isLiving_status()) {
-            clearScreen();
-            System.out.println(target.getClass().getSimpleName() + " is already dead!\n");
-            return false;
-        }
-        if (attacker.getRange() < Math.abs(attacker.getPosition() - target.getPosition())) {
-            clearScreen();
-            System.out.println(target.getClass().getSimpleName() + " is out of range for an attack to be performed!\n");
-            return false;
-        }
-        return true;
-    }
 
     private static boolean performSpecialAbility(Scanner input, entities.Character character, Team allyTeam,
             Team opponentTeam) {
@@ -201,14 +200,14 @@ public class Game {
             System.out.println("(1) Sneak Attack");
             System.out.println("(2) Go into stealth mode");
             System.out.println("(3) Return to Action menu");
-            
+
             String choice = input.nextLine();
             clearScreen();
             switch (choice) {
                 case "1" -> {
                     if (assassin.isStealthActive()) {
                         if (assassinSneakAttack(input, assassin, opponentTeam)) {
-
+                            return true;
                         }
                     } else {
                         System.out.println("You are not currently in stealth mode!\n");
@@ -242,14 +241,14 @@ public class Game {
             clearScreen();
             switch (choice) {
                 case "1" -> {
-                    if (attemptAttack(assassin, opponentTeam.getChar1())) {
+                    if (entities.Character.attemptAttack(assassin, opponentTeam.getChar1())) {
                         double dmg = assassin.sneakAttack(opponentTeam.getChar1());
                         opponentTeam.getChar1().takeDamage(dmg);
                         return true;
                     }
                 }
                 case "2" -> {
-                    if (attemptAttack(assassin, opponentTeam.getChar2())) {
+                    if (entities.Character.attemptAttack(assassin, opponentTeam.getChar2())) {
                         double dmg = assassin.sneakAttack(opponentTeam.getChar2());
                         opponentTeam.getChar2().takeDamage(dmg);
                         return true;
@@ -281,7 +280,6 @@ public class Game {
                     }
                 }
                 case "2" -> {
-                    clearScreen();
                     return false;
                 }
                 default -> System.out.println("Invalid choice. Please select a valid input.\n");
@@ -322,7 +320,7 @@ public class Game {
 
             String choice = input.nextLine();
             clearScreen();
-        
+
             switch (choice) {
                 case "1" -> {
                     if (healer.getCoolDown() == 0) {
@@ -352,14 +350,16 @@ public class Game {
             clearScreen();
             switch (choice) {
                 case "1" -> {
-                    healer.heal(healer);
-                    healer.setCoolDown(2);
-                    return;
+                    if (healer.heal(healer)) {
+                        healer.setCoolDown(2);
+                        return;
+                    }
                 }
                 case "2" -> {
-                    healer.heal(teamMate);
-                    healer.setCoolDown(2);
-                    return;
+                    if (healer.heal(teamMate)) {
+                        healer.setCoolDown(2);
+                        return;
+                    }
                 }
                 case "3" -> {
                     clearScreen();
@@ -389,16 +389,6 @@ public class Game {
         System.out.println("Would you like to continue? (y/n)");
     }
 
-    // Prints the action options for the character
-    private static void printActionOptions(entities.Character character, Team opponentTeam) {
-        System.out.println("Choose an action for " + character.getClass().getSimpleName() + ":");
-        System.out.println("(1) Move to the right (Current position: " + character.getPosition() + "m)");
-        System.out.println("(2) Move to the left (Current position: " + character.getPosition() + "m)");
-        System.out.println("(3) Attack " + opponentTeam.getChar1().getClass().getSimpleName());
-        System.out.println("(4) Attack " + opponentTeam.getChar2().getClass().getSimpleName());
-        System.out.println("(5) Perform a special ability");
-    }
-
     // Reduces the cooldown of the character if they recently activated a special
     // ability
     private static void reduceCooldown(entities.Character character) {
@@ -422,7 +412,7 @@ public class Game {
 
     // Just for flushing the output on the terminal and making it look nicer
     public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
+        System.out.print("\033[H\033[2J\033[3J");
         System.out.flush();
     }
 }

@@ -1,6 +1,13 @@
 package game;
 
-import entities.*;
+import entities.Archers.Cito;
+import entities.Archers.Sagitta;
+import entities.Assassins.Mortem;
+import entities.Assassins.Trova;
+import entities.Fighters.Tigris;
+import entities.Fighters.Ursi;
+import entities.Healers.Nutrix;
+import entities.Healers.Sanita;
 
 public class CharacterFactory {
 
