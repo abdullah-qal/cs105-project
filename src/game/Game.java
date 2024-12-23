@@ -15,6 +15,11 @@ public class Game {
             switch (input.nextLine().toLowerCase()) {
                 case "y" -> {
                     clearScreen();
+                    //The random weather type is selected.
+                    Weather currentWeather = Weather.getRandomWeather();
+                    System.out.println("The weather for this game is: " + currentWeather.getName());
+                    System.out.println(currentWeather.getDescription());
+
                     System.out.println(
                             "Team 1, please select your characters. The currently supported characters are: \n");
                     System.out.println("Assassins: Mortem, Trova");
@@ -30,7 +35,12 @@ public class Game {
                     System.out.println("Fighters: Tigris, Ursi");
                     System.out.println("Healers: Nutrix, Sanita\n");
                     Team team2 = Team.createTeam(input, 200);
+                    //Selected map effect is implemented in game.
                     selectedMap.applyEffects(new Character[]{
+                            team1.getChar1(), team1.getChar2(), team2.getChar1(), team2.getChar2()
+                    });
+                    //Random weather type is implemented in game.
+                    currentWeather.applyEffects(new Character[]{
                             team1.getChar1(), team1.getChar2(), team2.getChar1(), team2.getChar2()
                     });
                     clearScreen();
