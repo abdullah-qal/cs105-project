@@ -30,6 +30,9 @@ public class Game {
                     System.out.println("Fighters: Tigris, Ursi");
                     System.out.println("Healers: Nutrix, Sanita\n");
                     Team team2 = Team.createTeam(input, 200);
+                    selectedMap.applyEffects(new Character[]{
+                            team1.getChar1(), team1.getChar2(), team2.getChar1(), team2.getChar2()
+                    });
                     clearScreen();
                     gameCommences(team1, team2);
                     return;
@@ -37,6 +40,31 @@ public class Game {
                 case "n" -> {
                     System.out.println("Maybe another time!");
                     return;
+                }
+                default -> System.out.println("Invalid choice. Please select a valid input.");
+            }
+        }
+    }
+    //Map selection
+    private static Map selectMap(Scanner input) {
+        System.out.println("Please select the map for the game:");
+        System.out.println("(1) Mountain (Decreases each champion's damage by 20)");
+        System.out.println("(2) Desert (Halves each champion's movement speed)");
+        System.out.println("(3) Garden (Increases each champion's armor by 20)");
+
+        while (true) {
+            switch (input.nextLine()) {
+                case "1" -> {
+                    System.out.println("You have selected the Mountain map!,Now every champion's damage will be decreased by 20.");
+                    return new Mountain();
+                }
+                case "2" -> {
+                    System.out.println("You have selected the Desert map!,Now every champion's movement speed will be halved.");
+                    return new Desert();
+                }
+                case "3" -> {
+                    System.out.println("You have selected the Garden map!,Now every champion's armor will be increased by 20.");
+                    return new Garden();
                 }
                 default -> System.out.println("Invalid choice. Please select a valid input.");
             }
