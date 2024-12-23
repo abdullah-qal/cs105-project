@@ -39,15 +39,21 @@ public abstract class Character {
     public static boolean moveCharacter(Scanner input, Character character, int direction) {
         Game.clearScreen();
         System.out.println(
-                "By how much would you like to move? (Choose a value between 0 and " + character.movementSpeed + "m)");
+                "By how much would you like to move? (Choose a value that is a multiple of 5 between 0 and "
+                        + character.movementSpeed + "m)");
         int newPosition;
         try {
             int number = input.nextInt();
             input.nextLine(); // Consume the newline character
             if (number < 0 || number > character.movementSpeed) {
                 Game.clearScreen();
-                System.out
-                        .println("Invalid input! You can't move faster than your movement speed or by a negative value.\n");
+                System.out.println(
+                        "Invalid input! You can't move faster than your movement speed or by a negative value.\n");
+                return false;
+            }
+            if (number % 5 != 0) {
+                Game.clearScreen();
+                System.out.println("Invalid input! You can only move in increments of 5.\n");
                 return false;
             }
             newPosition = character.position + direction * number;
@@ -60,8 +66,9 @@ public abstract class Character {
             Game.clearScreen();
 
             System.out
-                    .println(character.getClass().getSimpleName() + " moved to position " + character.position + "m.\n");
-        return true;
+                    .println(
+                            character.getClass().getSimpleName() + " moved to position " + character.position + "m.\n");
+            return true;
         } catch (InputMismatchException e) {
             Game.clearScreen();
             System.out.println("Invalid input! Please enter a valid integer.\n");
