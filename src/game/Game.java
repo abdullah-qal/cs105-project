@@ -22,20 +22,24 @@ public class Game {
             switch (input.nextLine()) {
                 case "y" -> {
                     clearScreen();
+
                     System.out.println("Team 1, please select your characters.\n");
                     System.out.println("The currently supported characters are: \n");
                     System.out.println("Assassins: Mortem, Torva");
                     System.out.println("Archers: Cito, Sagitta");
                     System.out.println("Fighters: Tigris, Ursi");
                     System.out.println("Healers: Nutrix, Sanita\n");
+
                     Team team1 = Team.createTeam(input, 0);
                     clearScreen();
                     System.out.println("Team 2, please select your characters.\n");
+
                     System.out.println("The currently supported characters are: \n");
                     System.out.println("Assassins: Mortem, Torva");
                     System.out.println("Archers: Cito, Sagitta");
                     System.out.println("Fighters: Tigris, Ursi");
                     System.out.println("Healers: Nutrix, Sanita\n");
+
                     Team team2 = Team.createTeam(input, 200);
                     clearScreen();
                     gameCommences(team1, team2);
@@ -62,131 +66,129 @@ public class Game {
     private static void gameCommences(Team team1, Team team2) {
         Scanner input = new Scanner(System.in);
         int turn = 1;
-
+    
         while (true) {
             System.out.println("|-------- TURN " + turn + " --------|");
-
-            System.out.println("Team 1 to play.");
-            takeTurn(input, team1, team2);
-            if (!team2.isTeamAlive()) {
+    
+            // Team 1 plays
+            if (!takeTurn(input, team1, team2, "Team 1")) {
                 System.out.println("Team 1 wins! The game lasted for " + turn + " turns.");
                 break;
             }
-            System.out.println("Team 2 to play.");
-            takeTurn(input, team2, team1);
-            if (!team1.isTeamAlive()) {
+    
+            // Team 2 plays
+            if (!takeTurn(input, team2, team1, "Team 2")) {
                 System.out.println("Team 2 wins! The game lasted for " + turn + " turns.");
+                break;
             }
-            reduceCooldown(team1.getChar1());
-            reduceCooldown(team1.getChar2());
-            reduceCooldown(team2.getChar1());
-            reduceCooldown(team2.getChar2());
-
-            turn++;
+    
+            reduceCooldowns(team1, team2);
+    
             displayGameState(team1, team2);
-
-            outerLoop: while (true) {
-                switch (input.nextLine().toLowerCase()) {
-                    case "y" -> {
-                        clearScreen();
-                        break outerLoop;
-                    }
-                    case "n" -> {
-                        System.out.println("Thanks for playing!");
-                        return;
-                    }
-                    default -> System.out.println("Invalid choice. Please select a valid input.");
-                }
+            if (!promptToContinue(input)) {
+                System.out.println("Thanks for playing!");
+                break;
             }
+    
+            turn++;
         }
     }
-
-    // Manages turns in the game
-    private static void takeTurn(Scanner input, Team currentTeam, Team opponentTeam) {
-        entities.Character selectedChar = selectCharacter(input, currentTeam);
-
-        performAction(input, selectedChar, currentTeam, opponentTeam);
-    }
-
-    private static entities.Character selectCharacter(Scanner input, Team team) {
+    
+    private static boolean takeTurn(Scanner input, Team currentTeam, Team opponentTeam, String teamName) {
+        System.out.println(teamName + " to play.");
         while (true) {
+
             System.out.println("Select a character:");
-            System.out.println("(1) " + team.getChar1().getClass().getSimpleName() + " ("
-                    + team.getChar1().getClass().getSuperclass().getSimpleName() + ") - " + entities.Character.noramlisedValue(team.getChar1().getHealth())
-                    + "/" + entities.Character.noramlisedValue(team.getChar1().getMaxHealth()) + " HP");
-            System.out.println("(2) " + team.getChar2().getClass().getSimpleName() + " (" +
-                    team.getChar2().getClass().getSuperclass().getSimpleName() + ") - " + entities.Character.noramlisedValue(team.getChar2().getHealth())
-                    + "/" + entities.Character.noramlisedValue(team.getChar2().getMaxHealth()) + " HP");
+            System.out.printf("(1) %s (%s) - %.2f/%.2f HP%n",
+                    currentTeam.getChar1().getClass().getSimpleName(),
+                    currentTeam.getChar1().getClass().getSuperclass().getSimpleName(),
+                    entities.Character.normalisedValue(currentTeam.getChar1().getHealth()),
+                    entities.Character.normalisedValue(currentTeam.getChar1().getMaxHealth()));
+            System.out.printf("(2) %s (%s) - %.2f/%.2f HP%n",
+                    currentTeam.getChar2().getClass().getSimpleName(),
+                    currentTeam.getChar2().getClass().getSuperclass().getSimpleName(),
+                    entities.Character.normalisedValue(currentTeam.getChar2().getHealth()),
+                    entities.Character.normalisedValue(currentTeam.getChar2().getMaxHealth()));
+            
             String choice = input.nextLine();
             clearScreen();
-            switch (choice) {
-                case "1" -> {
-                    if (team.getChar1().isLiving_status()) {
-                        return team.getChar1();
-                    }
-                    System.out.println(team.getChar1().getClass().getSimpleName()
-                            + " is already dead! Choose a different ability\n");
-                }
-                case "2" -> {
-                    if (team.getChar2().isLiving_status()) {
-                        return team.getChar2();
-                    }
-                    System.out.println(team.getChar2().getClass().getSimpleName() + " is already dead!\n");
-                }
-                default -> {
-                    System.out.println("Invalid choice. Please select a valid input.\n");
-                }
+    
+            entities.Character selectedChar = switch (choice) {
+                case "1" -> currentTeam.getChar1();
+                case "2" -> currentTeam.getChar2();
+                default -> null;
+            };
+    
+            if (selectedChar == null) {
+                System.out.println("Invalid choice. Please select a valid input.\n");
+                continue;
+            }
+    
+            if (!selectedChar.isLiving_status()) {
+                System.out.println(selectedChar.getClass().getSimpleName() + " is already dead! Choose a different character\n");
+                continue;
+            }
+    
+            if (performAction(input, selectedChar, currentTeam, opponentTeam)) {
+                break;
             }
         }
+        return opponentTeam.isTeamAlive();
     }
 
     // Performs an action based on the user's choice
-    private static void performAction(Scanner input, entities.Character character,
+    private static boolean performAction(Scanner input, entities.Character character,
             Team allyTeam, Team opponentTeam) {
         while (true) {
-            System.out.println("Choose an action for " + character.getClass().getSimpleName() + ":");
-            System.out.println("(1) Move to the right (Current position: " + character.getPosition() + "m)");
-            System.out.println("(2) Move to the left (Current position: " + character.getPosition() + "m)");
-            System.out.println("(3) Attack " + opponentTeam.getChar1().getClass().getSimpleName());
-            System.out.println("(4) Attack " + opponentTeam.getChar2().getClass().getSimpleName());
-            System.out.println("(5) Perform a special ability");
-            System.out.println("(6) Retrieve current stats about a character");
+            System.out.printf("Choose an action for %s:%n", character.getClass().getSimpleName());
+            System.out.printf("(1) Move to the right (Current position: %d m)%n", character.getPosition());
+            System.out.printf("(2) Move to the left (Current position: %d m)%n", character.getPosition());
+            System.out.printf("(3) Attack %s%n", opponentTeam.getChar1().getClass().getSimpleName());
+            System.out.printf("(4) Attack %s%n", opponentTeam.getChar2().getClass().getSimpleName());
+            System.out.printf("(5) Perform a special ability%n");
+            System.out.printf("(6) Retrieve current stats about a character%n");
+            System.out.printf("(7) Return to character selection menu%n");
+            
 
             String choice = input.nextLine();
             switch (choice) {
                 case "1" -> {
                     if (entities.Character.moveCharacter(input, character, 1)) {
-                        return;
+                        return true;
                     }
                 }
                 case "2" -> {
                     if (entities.Character.moveCharacter(input, character, -1)) {
-                        return;
+                        return true;
                     }
                 }
                 case "3" -> {
                     if (entities.Character.attemptAttack(character, opponentTeam.getChar1())) {
                         int dmg = character.attack(opponentTeam.getChar1());
                         opponentTeam.getChar1().takeDamage(dmg);
-                        return;
+                        return true;
                     }
                 }
                 case "4" -> {
                     if (entities.Character.attemptAttack(character, opponentTeam.getChar2())) {
                         int dmg = character.attack(opponentTeam.getChar2());
                         opponentTeam.getChar2().takeDamage(dmg);
-                        return;
+                        return true;
                     }
                 }
                 case "5" -> {
                     if (performSpecialAbility(input, character, allyTeam, opponentTeam)) {
-                        return;
+                        return true;
                     }
                 }
                 case "6" -> {
                     clearScreen();
                     if (retrieveInfo(input, character, allyTeam, opponentTeam)) {
                     }
+                }
+                case "7" -> {
+                    clearScreen();
+                    return false;
                 }
                 default -> {
                     clearScreen();
@@ -201,12 +203,13 @@ public class Game {
         while (true) {
             entities.Character teamMate = allyTeam.getChar1() != character ? allyTeam.getChar1() : allyTeam.getChar2();
 
-            System.out.println("Which character's stats would you like to view?");
-            System.out.println("(1) Myself");
-            System.out.println("(3) My team's " + teamMate.getClass().getSimpleName());
-            System.out.println("(4) " + opponentTeam.getChar1().getClass().getSimpleName());
-            System.out.println("(5) " + opponentTeam.getChar2().getClass().getSimpleName());
-            System.out.println("(6) Return to action menu");
+            System.out.printf("Which character's stats would you like to view?%n");
+            System.out.printf("(1) Myself%n");
+            System.out.printf("(2) My team's %s%n", teamMate.getClass().getSimpleName());
+            System.out.printf("(3) %s%n", opponentTeam.getChar1().getClass().getSimpleName());
+            System.out.printf("(4) %s%n", opponentTeam.getChar2().getClass().getSimpleName());
+            System.out.printf("(5) Return to action menu%n");
+            
 
             String choice = input.nextLine();
             clearScreen();
@@ -216,22 +219,18 @@ public class Game {
                     return true;
                 }
                 case "2" -> {
-                    displayCharacterStats(input, allyTeam.getChar1());
+                    displayCharacterStats(input, teamMate);
                     return true;
                 }
                 case "3" -> {
-                    displayCharacterStats(input, allyTeam.getChar2());
-                    return true;
-                }
-                case "4" -> {
                     displayCharacterStats(input, opponentTeam.getChar1());
                     return true;
                 }
-                case "5" -> {
+                case "4" -> {
                     displayCharacterStats(input, opponentTeam.getChar2());
                     return true;
                 }
-                case "6" -> {
+                case "5" -> {
                     return false;
                 }
                 default -> {
@@ -297,10 +296,11 @@ public class Game {
     private static boolean assassinSneakAttack(Scanner input, Assassin assassin, Team opponentTeam) {
         clearScreen();
         while (true) {
-            System.out.println("Which opponent would you like to attack?");
-            System.out.println("(1) " + opponentTeam.getChar1().getClass().getSimpleName());
-            System.out.println("(2) " + opponentTeam.getChar2().getClass().getSimpleName());
-            System.out.println("(3) Return to Attack menu");
+            System.out.printf("Which opponent would you like to attack?%n");
+            System.out.printf("(1) %s%n", opponentTeam.getChar1().getClass().getSimpleName());
+            System.out.printf("(2) %s%n", opponentTeam.getChar2().getClass().getSimpleName());
+            System.out.printf("(3) Return to Attack menu%n");
+            
 
             String choice = input.nextLine();
             clearScreen();
@@ -403,32 +403,33 @@ public class Game {
         }
     }
 
-    private static void healerHeal(Scanner input, Healer healer, Team allyTeam) {
-        while (true) {
-            System.out.println("Which character would you like to heal?");
-            System.out.println("(1) Yourself");
-            entities.Character teamMate = allyTeam.getChar1() != healer ? allyTeam.getChar1() : allyTeam.getChar2();
-            System.out.println("(2) " + teamMate.getClass().getSimpleName());
-            System.out.println("(3) return to special actions menu");
+    private static boolean healerHeal(Scanner input, Healer healer, Team allyTeam) {
+        entities.Character teamMate = allyTeam.getChar1() != healer ? allyTeam.getChar1() : allyTeam.getChar2();
 
+        while (true) {
+            System.out.printf("Which character would you like to heal?%n");
+            System.out.printf("(1) Yourself%n");
+            System.out.printf("(2) %s%n", teamMate.getClass().getSimpleName());
+            System.out.printf("(3) Return to special actions menu%n");
+            
             String choice = input.nextLine();
             clearScreen();
             switch (choice) {
                 case "1" -> {
                     if (healer.heal(healer)) {
                         healer.setCoolDown(2);
-                        return;
+                        return true;
                     }
                 }
                 case "2" -> {
                     if (healer.heal(teamMate)) {
                         healer.setCoolDown(2);
-                        return;
+                        return true;
                     }
                 }
                 case "3" -> {
                     clearScreen();
-                    return;
+                    return false;
                 }
                 default -> System.out.println("Invalid choice. Please select a valid action.\n");
             }
@@ -438,42 +439,55 @@ public class Game {
     // ------------------HELPER METHODS------------------//
     // Displays the current state of the game
     private static void displayGameState(Team team1, Team team2) {
-        System.out.println("The turn has concluded! The following is the current state of the game:\n");
-        System.out.println(RED + "Team 1" + RESET + ":\n");
-        System.out.println(RED + team1.getChar1().getClass().getSimpleName().charAt(0) + RESET
-                + team1.getChar1().getClass().getSimpleName().substring(1) + " - " +  entities.Character.noramlisedValue(team1.getChar1().getHealth()) + "/"
-                + entities.Character.noramlisedValue(team1.getChar1().getMaxHealth()) + " HP"
-                + " - " + team1.getChar1().getPosition() + "m");
-        System.out.println(RED + team1.getChar2().getClass().getSimpleName().charAt(0) + RESET
-                + team1.getChar2().getClass().getSimpleName().substring(1) + " - " + entities.Character.noramlisedValue(team1.getChar2().getHealth()) + "/" 
-                + entities.Character.noramlisedValue(team1.getChar2().getMaxHealth()) + " HP"
-                + " - " + team1.getChar2().getPosition() + "m\n");
-        System.out.println(GREEN + "Team 2" + RESET + ":\n");
-        System.out.println(GREEN + team2.getChar1().getClass().getSimpleName().charAt(0) + RESET
-                + team2.getChar1().getClass().getSimpleName().substring(1) + " - " + entities.Character.noramlisedValue(team2.getChar1().getHealth()) + "/"
-                + entities.Character.noramlisedValue(team2.getChar1().getMaxHealth())+ " HP"
-                + " - " + team2.getChar1().getPosition() + "m");
-        System.out.println(GREEN + team2.getChar2().getClass().getSimpleName().charAt(0) + RESET
-                + team2.getChar2().getClass().getSimpleName().substring(1) + " - " + entities.Character.noramlisedValue(team2.getChar2().getHealth()) + "/"
-                + entities.Character.noramlisedValue(team2.getChar2().getMaxHealth()) + " HP"
-                + " - " + team2.getChar2().getPosition() + "m\n");
+        System.out.printf("The turn has concluded! The following is the current state of the game:%n%n");
+
+        System.out.printf("%sTeam 1%s:%n", RED, RESET);
+        System.out.printf("%s%c%s%s - %s/%s HP - %d m%n", RED, 
+            team1.getChar1().getClass().getSimpleName().charAt(0), RESET, 
+            team1.getChar1().getClass().getSimpleName().substring(1),
+            entities.Character.normalisedValue(team1.getChar1().getHealth()), 
+            entities.Character.normalisedValue(team1.getChar1().getMaxHealth()), 
+            team1.getChar1().getPosition());
+        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n%n", RED, 
+            team1.getChar2().getClass().getSimpleName().charAt(0), RESET,
+            team1.getChar2().getClass().getSimpleName().substring(1),
+            entities.Character.normalisedValue(team1.getChar2().getHealth()),
+            entities.Character.normalisedValue(team1.getChar2().getMaxHealth()),
+            team1.getChar2().getPosition());
+        
+        System.out.printf("%sTeam 2%s:%n", GREEN, RESET);
+        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n", GREEN, 
+            team2.getChar1().getClass().getSimpleName().charAt(0), RESET, 
+            team2.getChar1().getClass().getSimpleName().substring(1),
+            entities.Character.normalisedValue(team2.getChar1().getHealth()), 
+            entities.Character.normalisedValue(team2.getChar1().getMaxHealth()), 
+            team2.getChar1().getPosition());
+        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n%n", GREEN, 
+            team2.getChar2().getClass().getSimpleName().charAt(0), RESET, 
+            team2.getChar2().getClass().getSimpleName().substring(1),
+            entities.Character.normalisedValue(team2.getChar2().getHealth()),
+            entities.Character.normalisedValue(team2.getChar2().getMaxHealth()),
+            team2.getChar2().getPosition());
+        
         AsciiArt.makeArt(team1, team2);
-        System.out.println("\nWould you like to continue? (y/n)");
     }
 
     // Displays the current stats of a character
     private static void displayCharacterStats(Scanner input, entities.Character character) {
-        System.out.println("Current stats of " + character.getClass().getSimpleName() + ":\n");
-        System.out.println("Current Position: " + character.getPosition() + " m");
-        System.out.println("Health: " + entities.Character.noramlisedValue(character.getHealth()) + "/" + entities.Character.noramlisedValue(character.getMaxHealth()) + " HP");
-        System.out.println("Damage: " + entities.Character.noramlisedValue(character.getDamage()) + " DMG");
-        System.out.println("Defense: " + character.getDefense() + " DEF");
-        System.out.println("Movement Speed: " + character.getMovementSpeed() + " m/turn");
-        System.out.println("Range: " + character.getRange() + " m");
-        System.out.println("Crit Rate: " + character.getCritRate() + "%");
-        System.out.println("Crit Damage: " + character.getCritDmg() + "%");
-        System.out.println("Living Status: " + (character.isLiving_status() ? "Alive" : "Dead"));
-        System.out.println("Cooldown: " + character.getCoolDown() + " turns\n");
+        System.out.printf("Current stats of %s:%n", character.getClass().getSimpleName());
+        System.out.printf("Current Position: %d m%n", character.getPosition());
+        System.out.printf("Health: %.2f/%.2f HP%n", 
+                          entities.Character.normalisedValue(character.getHealth()), 
+                          entities.Character.normalisedValue(character.getMaxHealth()));
+        System.out.printf("Damage: %s DMG%n", 
+                          entities.Character.normalisedValue(character.getDamage()));
+        System.out.printf("Defense: %.2f DEF%n", character.getDefense());
+        System.out.printf("Movement Speed: %d m/turn%n", character.getMovementSpeed());
+        System.out.printf("Range: %d m%n", character.getRange());
+        System.out.printf("Crit Rate: %.2f%%%n", character.getCritRate());
+        System.out.printf("Crit Damage: %.2f%%%n", character.getCritDmg());
+        System.out.printf("Living Status: %s%n", character.isLiving_status() ? "Alive" : "Dead");
+        System.out.printf("Cooldown: %d turns%n%n", character.getCoolDown());
     }
 
     // Reduces the cooldown of the character if they recently activated a special
@@ -495,6 +509,30 @@ public class Game {
                 }
             }
         }
+    }
+    // prompts if you want to continue
+    private static boolean promptToContinue(Scanner input) {
+        while (true) {
+            System.out.println("Do you want to continue? (y/n)");
+            String choice = input.nextLine().toLowerCase();
+            switch (choice) {
+                case "y":
+                    clearScreen();
+                    return true;
+                case "n":
+                    clearScreen();
+                    return false;
+                default:
+                    System.out.println("Invalid choice. Please select a valid input.");
+            }
+        }
+    }
+    // For maanging cooldowns
+    private static void reduceCooldowns(Team team1, Team team2) {
+        reduceCooldown(team1.getChar1());
+        reduceCooldown(team1.getChar2());
+        reduceCooldown(team2.getChar1());
+        reduceCooldown(team2.getChar2());
     }
 
     // Just for flushing the output on the terminal and making it look nicer

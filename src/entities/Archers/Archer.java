@@ -17,23 +17,25 @@ public abstract class Archer extends Character {
         if (!visionActive) {
             visionActive = true;
             range *= 2;
-            System.out.println(this.getClass().getSimpleName()
-                    + " slowly opens his eyes with incredible sharpness! His attack range is now " + range + "m\n");
+            System.out.printf(
+                    "%s slowly opens his eyes with incredible sharpness! His attack range is now %d m.%n%n",
+                    this.getClass().getSimpleName(),
+                    range);
         } else {
-            System.out.println(this.getClass().getSimpleName()
-                    + "already sees sharply\n");
+            System.out.printf(
+                    "%s already sees sharply.%n%n",
+                    this.getClass().getSimpleName());
         }
     }
 
     public void deactivateVision() {
         visionActive = false;
         range /= 2; // Reverts range to its original value
-        System.out.println(this.getClass().getSimpleName()
-                + "'s sharp sight goes away. His attacking range is reverted back to " + range + "m\n");
+        System.out.printf("%s's sharp sight goes away. His attacking range is reverted back to %d m.%n%n",
+                this.getClass().getSimpleName(), range);
     }
 
     public boolean isVisionActive() {
         return visionActive;
     }
-
 }

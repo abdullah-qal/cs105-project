@@ -8,7 +8,7 @@ public class CharacterInfo {
 
         while (true) {
             System.out.println("The currently supported characters are: \n");
-            System.out.println("Assassins: Mortem, Trova");
+            System.out.println("Assassins: Mortem, Torva");
             System.out.println("Archers: Cito, Sagitta");
             System.out.println("Fighters: Tigris, Ursi");
             System.out.println("Healers: Nutrix, Sanita\n");
@@ -45,7 +45,7 @@ public class CharacterInfo {
                 case "torva":
                     System.out.println(
                             """
-                            Deadly and elusive, Trova is the assassin who never misses her mark.
+                            Deadly and elusive, Torva is the assassin who never misses her mark.
                             Her sneak attacks are the stuff of legend, and her foes tremble in fear before they see her coming.
 
                             Damage: 65 DMG

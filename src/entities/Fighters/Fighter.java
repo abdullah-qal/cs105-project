@@ -16,25 +16,28 @@ public abstract class Fighter extends Character {
     }
 
     // Fighter-specific methods
-    // anger increases Fighters' defense by %30 and it can only be used if Fighters
+    // Anger increases Fighters' defense by 30% and it can only be used if Fighters
     // are in rage.
     public void activateAnger() {
         if (!anger) {
             anger = true;
-            defense = angerDefense;// increases defense by %30.
-            System.out.println(
-                    this.getClass().getSimpleName()
-                            + " howls in anger as berserker rage overcomes him! His Defense has increased to "
-                            + defense + "\n");
+            defense = angerDefense; // Increases defense by 30%
+            System.out.printf(
+                    "%s howls in anger as berserker rage overcomes him! His Defense has increased to %.2f DEF.%n%n",
+                    this.getClass().getSimpleName(), defense);
         } else {
-            System.out.println(this.getClass().getSimpleName() + " is already enraged. \n");
+            System.out.printf(
+                    "%s is already enraged!%n%n",
+                    this.getClass().getSimpleName());
         }
     }
 
     public void deactivateAnger() {
         anger = false;
         defense = baseDefense; // Revert defense to its original value
-        System.out.println(this.getClass().getSimpleName() + " has calmed down. His Defense is reverted back to " + defense + " DEF\n");
+        System.out.printf(
+                "%s has calmed down. His Defense is reverted back to %.2f DEF.%n%n",
+                this.getClass().getSimpleName(), defense);
     }
 
     public boolean isAngerActive() {

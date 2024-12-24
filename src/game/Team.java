@@ -27,6 +27,12 @@ public class Team {
             }
             Game.clearScreen();
             System.out.println("Characters must be different. Please re-enter the characters.\n");
+            
+            System.out.println("The currently supported characters are: \n");
+            System.out.println("Assassins: Mortem, Torva");
+            System.out.println("Archers: Cito, Sagitta");
+            System.out.println("Fighters: Tigris, Ursi");
+            System.out.println("Healers: Nutrix, Sanita\n");
         }
     
         return new Team(char1, char2);

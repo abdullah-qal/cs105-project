@@ -17,9 +17,10 @@ public abstract class Assassin extends Character {
     // used if the Assassin is in stealth-mode.
     public int sneakAttack(Character target) {
         double bonusMultiplier = 1.5; // Sneak attacks deal 50% more damage
-        System.out.println(
-                this.getClass().getSimpleName() + " suddenly appears from the darkness and does a sneak attack on "
-                        + target.getClass().getSimpleName() + "!\n");
+        System.out.printf(
+            this.getClass().getSimpleName(),
+            target.getClass().getSimpleName());
+
         return calculateDamage(target, bonusMultiplier);
     }
 
@@ -27,16 +28,22 @@ public abstract class Assassin extends Character {
         Game.clearScreen();
         if (!stealth) {
             stealth = true;
-            System.out.println(this.getClass().getSimpleName() + " is now in Stealth mode! \n");
+            System.out.printf(
+                "%s is now in Stealth mode!%n%n",
+                this.getClass().getSimpleName());
             return true;
         }
-        System.out.println(this.getClass().getSimpleName() + " is already in Stealth mode. \n");
+        System.out.printf(
+            "%s is already in Stealth mode.%n%n",
+            this.getClass().getSimpleName());
         return false;
     }
 
     public void deactivateStealth() {
         stealth = false;
-        System.out.println(this.getClass().getSimpleName() + " has lost his stealth. \n");
+        System.out.printf(
+            "%s has lost his stealth.%n%n",
+            this.getClass().getSimpleName());
 
     }
 
