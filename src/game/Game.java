@@ -8,8 +8,12 @@ import entities.Fighters.Fighter;
 import entities.Healers.Healer;
 
 public class Game {
+    final static String RESET = "\033[0m";
+    final static String RED = "\033[31m";
+    final static String GREEN = "\033[32m"; // ANSI escape codes for colouring purposes
     // ------------------GAMEPLAY METHODS------------------//
     // Starts the game
+
     public static void startGame() {
         Scanner input = new Scanner(System.in);
         while (true) {
@@ -20,7 +24,7 @@ public class Game {
                     clearScreen();
                     System.out.println("Team 1, please select your characters.\n");
                     System.out.println("The currently supported characters are: \n");
-                    System.out.println("Assassins: Mortem, Trova");
+                    System.out.println("Assassins: Mortem, Torva");
                     System.out.println("Archers: Cito, Sagitta");
                     System.out.println("Fighters: Tigris, Ursi");
                     System.out.println("Healers: Nutrix, Sanita\n");
@@ -28,7 +32,7 @@ public class Game {
                     clearScreen();
                     System.out.println("Team 2, please select your characters.\n");
                     System.out.println("The currently supported characters are: \n");
-                    System.out.println("Assassins: Mortem, Trova");
+                    System.out.println("Assassins: Mortem, Torva");
                     System.out.println("Archers: Cito, Sagitta");
                     System.out.println("Fighters: Tigris, Ursi");
                     System.out.println("Healers: Nutrix, Sanita\n");
@@ -109,10 +113,10 @@ public class Game {
             System.out.println("Select a character:");
             System.out.println("(1) " + team.getChar1().getClass().getSimpleName() + " ("
                     + team.getChar1().getClass().getSuperclass().getSimpleName() + ") - " + entities.Character.noramlisedValue(team.getChar1().getHealth())
-                    + "/" + entities.Character.noramlisedValue(team.getChar1().getMaxHealth()) + " HP - " + team.getChar1().getPosition() + "m");
+                    + "/" + entities.Character.noramlisedValue(team.getChar1().getMaxHealth()) + " HP");
             System.out.println("(2) " + team.getChar2().getClass().getSimpleName() + " (" +
                     team.getChar2().getClass().getSuperclass().getSimpleName() + ") - " + entities.Character.noramlisedValue(team.getChar2().getHealth())
-                    + "/" + entities.Character.noramlisedValue(team.getChar2().getMaxHealth()) + " HP - " + team.getChar2().getPosition() + "m");
+                    + "/" + entities.Character.noramlisedValue(team.getChar2().getMaxHealth()) + " HP");
             String choice = input.nextLine();
             clearScreen();
             switch (choice) {
@@ -435,18 +439,24 @@ public class Game {
     // Displays the current state of the game
     private static void displayGameState(Team team1, Team team2) {
         System.out.println("The turn has concluded! The following is the current state of the game:\n");
-        System.out.println("Team 1:");
-        System.out.println(team1.getChar1().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue(team1.getChar1().getHealth()) + "HP"
+        System.out.println(RED + "Team 1" + RESET + ":\n");
+        System.out.println(RED + team1.getChar1().getClass().getSimpleName().charAt(0) + RESET
+                + team1.getChar1().getClass().getSimpleName().substring(1) + " - " +  entities.Character.noramlisedValue(team1.getChar1().getHealth()) + "/"
+                + entities.Character.noramlisedValue(team1.getChar1().getMaxHealth()) + " HP"
                 + " - " + team1.getChar1().getPosition() + "m");
-        System.out.println(
-                team1.getChar2().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue(team1.getChar2().getHealth()) + "HP" + " - "
-                        + team1.getChar2().getPosition() + "m\n");
-        System.out.println("Team 2:");
-        System.out.println(team2.getChar1().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue(team2.getChar1().getHealth()) + "HP"
+        System.out.println(RED + team1.getChar2().getClass().getSimpleName().charAt(0) + RESET
+                + team1.getChar2().getClass().getSimpleName().substring(1) + " - " + entities.Character.noramlisedValue(team1.getChar2().getHealth()) + "/" 
+                + entities.Character.noramlisedValue(team1.getChar2().getMaxHealth()) + " HP"
+                + " - " + team1.getChar2().getPosition() + "m\n");
+        System.out.println(GREEN + "Team 2" + RESET + ":\n");
+        System.out.println(GREEN + team2.getChar1().getClass().getSimpleName().charAt(0) + RESET
+                + team2.getChar1().getClass().getSimpleName().substring(1) + " - " + entities.Character.noramlisedValue(team2.getChar1().getHealth()) + "/"
+                + entities.Character.noramlisedValue(team2.getChar1().getMaxHealth())+ " HP"
                 + " - " + team2.getChar1().getPosition() + "m");
-        System.out.println(
-                team2.getChar2().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue( team2.getChar2().getHealth())+ "HP" + " - "
-                        + team2.getChar2().getPosition() + "m\n");
+        System.out.println(GREEN + team2.getChar2().getClass().getSimpleName().charAt(0) + RESET
+                + team2.getChar2().getClass().getSimpleName().substring(1) + " - " + entities.Character.noramlisedValue(team2.getChar2().getHealth()) + "/"
+                + entities.Character.noramlisedValue(team2.getChar2().getMaxHealth()) + " HP"
+                + " - " + team2.getChar2().getPosition() + "m\n");
         AsciiArt.makeArt(team1, team2);
         System.out.println("\nWould you like to continue? (y/n)");
     }
