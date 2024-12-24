@@ -9,24 +9,28 @@ import java.util.InputMismatchException;
 import game.*;
 
 public abstract class Character {
+    public final static int HEALTH_MULTIPLIER = 20; // Using 20 to avoid floating-point manipulation. Because all
+                                                    // rationals with denominators 5^m 2^n are guaranteed to be
+                                                    // terminating
     protected int position;
-    protected double damage;
-    protected double health;
-    protected double maxHealth;
+    protected int damage;
+    protected int health;
+    protected int maxHealth;
     protected double defense;
     protected int movementSpeed;
     protected int range;
     protected boolean living_status;
-    protected double critRate, critDmg;
+    protected double critRate;
+    protected double critDmg;
     protected int coolDown;
     private game.Team team; // Reference to the Team it is in
 
-    public Character(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
+    public Character(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
             int range, double critRate, double critDmg) {
         this.position = position;
-        this.damage = damage;
-        this.health = health;
-        this.maxHealth = maxHealth;
+        this.damage = damage * HEALTH_MULTIPLIER;
+        this.health = health * HEALTH_MULTIPLIER;
+        this.maxHealth = maxHealth * HEALTH_MULTIPLIER;
         this.defense = defense;
         this.movementSpeed = movementSpeed;
         this.range = range;
@@ -80,27 +84,30 @@ public abstract class Character {
 
     // Outgoing DMG calculator from any sort of attack with a specified bonus
     // multiplier
-    protected double calculateDamage(Character target, double bonusMultiplier) { //
+    protected int calculateDamage(Character target, double bonusMultiplier) { //
         Random random = new Random();
         double randomValue = random.nextDouble() * 100; // Random number between 0 and 100
         boolean isCritRate = randomValue < critRate; // Checks if crit rate happens
 
-        double baseDamage = isCritRate ? damage * (1 + critDmg * 0.01) : damage;
+        double baseDamageFloat = isCritRate ? damage * (1 + critDmg * 0.01) : damage;
+        int baseDamage = (int) baseDamageFloat;
         if (isCritRate) {
             Game.clearScreen();
             System.out.println(
-                    this.getClass().getSimpleName() + " landed a crit! It resulted in " + baseDamage + " dmg.");
+                    this.getClass().getSimpleName() + " landed a crit! It resulted in "
+                            + noramlisedValue(baseDamage) + " dmg.");
         } else {
             Game.clearScreen();
             System.out
-                    .println(this.getClass().getSimpleName() + " landed a normal hit yielding " + baseDamage + " dmg.");
+                    .println(this.getClass().getSimpleName() + " landed a normal hit yielding "
+                            + noramlisedValue(baseDamage)+ " dmg.");
         }
 
-        return baseDamage * bonusMultiplier;
+        return (int) (baseDamageFloat * bonusMultiplier);
     }
 
     // Regular attack without any additional DMG bonus
-    public double attack(Character target) {
+    public int attack(Character target) {
         return calculateDamage(target, 1);
     }
 
@@ -120,15 +127,16 @@ public abstract class Character {
     }
 
     // Incoming DMG calculator
-    public void takeDamage(double damage) {
-        double mitigatedDamage = damage * (1 - defense * 0.01);
+    public void takeDamage(int damage) {
+        int mitigatedDamage = (int) (damage * (1 - defense * 0.01));
         this.health -= mitigatedDamage;
         if (health <= 0) {
             health = 0;
             living_status = false;
         }
-        System.out.println(this.getClass().getSimpleName() + " takes " + mitigatedDamage
-                + " HP loss as result. Their health now is " + health + "\n");
+        System.out.println(this.getClass().getSimpleName() + " takes "
+                + noramlisedValue(mitigatedDamage)
+                + " HP loss as result. Their health now is " + noramlisedValue(health) + "\n");
         if (!living_status) {
             System.out.println(
                     "As a result of this decisive attack, " + this.getClass().getSimpleName() + " has fallen.\n");
@@ -140,15 +148,15 @@ public abstract class Character {
         return position;
     }
 
-    public double getDamage() {
+    public int getDamage() {
         return damage;
     }
 
-    public double getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    public double getMaxHealth() {
+    public int getMaxHealth() {
         return maxHealth;
     }
 
@@ -180,7 +188,7 @@ public abstract class Character {
         this.position = position;
     }
 
-    public void setHealth(double health) {
+    public void setHealth(int health) {
         this.health = health;
     }
 
@@ -204,5 +212,9 @@ public abstract class Character {
 
     public game.Team getTeam() {
         return team;
+    }
+
+    public static double noramlisedValue(int x) {
+        return (double) x / (double) HEALTH_MULTIPLIER;
     }
 }

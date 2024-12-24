@@ -42,7 +42,7 @@ public class CharacterInfo {
                                         """);
                     break;
 
-                case "trova":
+                case "torva":
                     System.out.println(
                             """
                             Deadly and elusive, Trova is the assassin who never misses her mark.

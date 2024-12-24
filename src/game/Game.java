@@ -108,11 +108,11 @@ public class Game {
         while (true) {
             System.out.println("Select a character:");
             System.out.println("(1) " + team.getChar1().getClass().getSimpleName() + " ("
-                    + team.getChar1().getClass().getSuperclass().getSimpleName() + ") - " + team.getChar1().getHealth()
-                    + "/" + team.getChar1().getMaxHealth() + " HP - " + team.getChar1().getPosition() + "m");
+                    + team.getChar1().getClass().getSuperclass().getSimpleName() + ") - " + entities.Character.noramlisedValue(team.getChar1().getHealth())
+                    + "/" + entities.Character.noramlisedValue(team.getChar1().getMaxHealth()) + " HP - " + team.getChar1().getPosition() + "m");
             System.out.println("(2) " + team.getChar2().getClass().getSimpleName() + " (" +
-                    team.getChar2().getClass().getSuperclass().getSimpleName() + ") - " + team.getChar2().getHealth()
-                    + "/" + team.getChar2().getMaxHealth() + " HP - " + team.getChar2().getPosition() + "m");
+                    team.getChar2().getClass().getSuperclass().getSimpleName() + ") - " + entities.Character.noramlisedValue(team.getChar2().getHealth())
+                    + "/" + entities.Character.noramlisedValue(team.getChar2().getMaxHealth()) + " HP - " + team.getChar2().getPosition() + "m");
             String choice = input.nextLine();
             clearScreen();
             switch (choice) {
@@ -162,14 +162,14 @@ public class Game {
                 }
                 case "3" -> {
                     if (entities.Character.attemptAttack(character, opponentTeam.getChar1())) {
-                        double dmg = character.attack(opponentTeam.getChar1());
+                        int dmg = character.attack(opponentTeam.getChar1());
                         opponentTeam.getChar1().takeDamage(dmg);
                         return;
                     }
                 }
                 case "4" -> {
                     if (entities.Character.attemptAttack(character, opponentTeam.getChar2())) {
-                        double dmg = character.attack(opponentTeam.getChar2());
+                        int dmg = character.attack(opponentTeam.getChar2());
                         opponentTeam.getChar2().takeDamage(dmg);
                         return;
                     }
@@ -303,14 +303,14 @@ public class Game {
             switch (choice) {
                 case "1" -> {
                     if (entities.Character.attemptAttack(assassin, opponentTeam.getChar1())) {
-                        double dmg = assassin.sneakAttack(opponentTeam.getChar1());
+                        int dmg = assassin.sneakAttack(opponentTeam.getChar1());
                         opponentTeam.getChar1().takeDamage(dmg);
                         return true;
                     }
                 }
                 case "2" -> {
                     if (entities.Character.attemptAttack(assassin, opponentTeam.getChar2())) {
-                        double dmg = assassin.sneakAttack(opponentTeam.getChar2());
+                        int dmg = assassin.sneakAttack(opponentTeam.getChar2());
                         opponentTeam.getChar2().takeDamage(dmg);
                         return true;
                     }
@@ -436,16 +436,16 @@ public class Game {
     private static void displayGameState(Team team1, Team team2) {
         System.out.println("The turn has concluded! The following is the current state of the game:\n");
         System.out.println("Team 1:");
-        System.out.println(team1.getChar1().getClass().getSimpleName() + " - " + team1.getChar1().getHealth() + "HP"
+        System.out.println(team1.getChar1().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue(team1.getChar1().getHealth()) + "HP"
                 + " - " + team1.getChar1().getPosition() + "m");
         System.out.println(
-                team1.getChar2().getClass().getSimpleName() + " - " + team1.getChar2().getHealth() + "HP" + " - "
+                team1.getChar2().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue(team1.getChar2().getHealth()) + "HP" + " - "
                         + team1.getChar2().getPosition() + "m\n");
         System.out.println("Team 2:");
-        System.out.println(team2.getChar1().getClass().getSimpleName() + " - " + team2.getChar1().getHealth() + "HP"
+        System.out.println(team2.getChar1().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue(team2.getChar1().getHealth()) + "HP"
                 + " - " + team2.getChar1().getPosition() + "m");
         System.out.println(
-                team2.getChar2().getClass().getSimpleName() + " - " + team2.getChar2().getHealth() + "HP" + " - "
+                team2.getChar2().getClass().getSimpleName() + " - " + entities.Character.noramlisedValue( team2.getChar2().getHealth())+ "HP" + " - "
                         + team2.getChar2().getPosition() + "m\n");
         AsciiArt.makeArt(team1, team2);
         System.out.println("\nWould you like to continue? (y/n)");
@@ -455,8 +455,8 @@ public class Game {
     private static void displayCharacterStats(Scanner input, entities.Character character) {
         System.out.println("Current stats of " + character.getClass().getSimpleName() + ":\n");
         System.out.println("Current Position: " + character.getPosition() + " m");
-        System.out.println("Health: " + character.getHealth() + "/" + character.getMaxHealth() + " HP");
-        System.out.println("Damage: " + character.getDamage() + " DMG");
+        System.out.println("Health: " + entities.Character.noramlisedValue(character.getHealth()) + "/" + entities.Character.noramlisedValue(character.getMaxHealth()) + " HP");
+        System.out.println("Damage: " + entities.Character.noramlisedValue(character.getDamage()) + " DMG");
         System.out.println("Defense: " + character.getDefense() + " DEF");
         System.out.println("Movement Speed: " + character.getMovementSpeed() + " m/turn");
         System.out.println("Range: " + character.getRange() + " m");

@@ -6,13 +6,13 @@ import entities.Character;
 import game.Game;
 
 public abstract class Healer extends Character {
-    protected double healAmount;
-    protected double divineHealChance;
+    protected int healAmount;
+    protected int divineHealChance;
 
-    public Healer(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
-            int range, double critRate, double critDmg, double healAmount, double divineHealChance) {
+    public Healer(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
+            int range, double critRate, int critDmg, int healAmount, int divineHealChance) {
         super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
-       this.healAmount = healAmount;
+       this.healAmount = healAmount * HEALTH_MULTIPLIER;
        this.divineHealChance = divineHealChance;
     }
 
@@ -29,7 +29,7 @@ public abstract class Healer extends Character {
             System.out.println(target.getClass().getSimpleName() + " is too far away to be healed!");
             return false;
         }
-        double baseHeal = isDivineHeal ? healAmount * 1.75 : healAmount;
+        int baseHeal = (int) (isDivineHeal ? healAmount * 1.75 : healAmount);
         if (target.getHealth() + baseHeal > target.getMaxHealth()) {
             target.setHealth(target.getMaxHealth());
         } else {
@@ -40,23 +40,23 @@ public abstract class Healer extends Character {
 
             if (target == this) {
                 System.out.println(this.getClass().getSimpleName() + " landed a divine heal! It healed themselves by "
-                        + baseHeal + " HP. Their health is now "
-                        + target.getHealth() + " HP\n");
+                        + noramlisedValue(baseHeal) + " HP. Their health is now "
+                        + noramlisedValue(target.getHealth())+ " HP\n");
             } else {
                 System.out.println(this.getClass().getSimpleName() + " landed a divine heal! It healed "
-                        + target.getClass().getSimpleName() + " by " + baseHeal + " HP. Their health is now "
-                        + target.getHealth() + " HP\n");
+                        + target.getClass().getSimpleName() + " by " + noramlisedValue(baseHeal) + " HP. Their health is now "
+                        + noramlisedValue(target.getHealth())+ " HP\n");
             }
         } else {
             Game.clearScreen();
             if (target == this) {
                 System.out.println(this.getClass().getSimpleName() + " landed a regular heal. It healed themselves by "
-                        + baseHeal + " HP. Their health is now "
-                        + target.getHealth() + " HP\n");
+                        + noramlisedValue(baseHeal) + " HP. Their health is now "
+                        + noramlisedValue(target.getHealth()) + " HP\n");
             } else {
                 System.out.println(this.getClass().getSimpleName() + " landed a regular heal. It healed "
-                        + target.getClass().getSimpleName() + " by " + baseHeal + " HP. Their health is now "
-                        + target.getHealth() + " HP\n");
+                        + target.getClass().getSimpleName() + " by " + noramlisedValue(baseHeal) + " HP. Their health is now "
+                        + noramlisedValue(target.getHealth()) + " HP\n");
             }
         }
         return true;

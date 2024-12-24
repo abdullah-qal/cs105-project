@@ -5,8 +5,8 @@ import entities.Character;
 public abstract class Archer extends Character {
     protected boolean visionActive; // Whether vision skill is active or not.
 
-    public Archer(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
-            int range, double critRate, double critDmg) {
+    public Archer(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
+            int range, double critRate, int critDmg) {
         super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
         visionActive = false;
     }

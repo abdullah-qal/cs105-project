@@ -14,14 +14,25 @@ public class Team {
     }
 
     static Team createTeam(Scanner input, int position) {
-
-        entities.Character char1 = getCharacter(input, "Enter the first character: ", position);
-        entities.Character char2 = getCharacter(input, "Enter the second character: ", position);
-
+        entities.Character char1;
+        entities.Character char2;
+    
+        while (true) {
+            char1 = getCharacter(input, "Enter the first character: ", position);
+            char2 = getCharacter(input, "Enter the second character: ", position);
+    
+            // Checks if the characters are the same
+            if (!char1.getClass().equals(char2.getClass())) {
+                break; 
+            }
+            Game.clearScreen();
+            System.out.println("Characters must be different. Please re-enter the characters.\n");
+        }
+    
         return new Team(char1, char2);
     }
-
-    static entities.Character getCharacter(Scanner scanner, String prompt, int position) {
+    
+    private static entities.Character getCharacter(Scanner scanner, String prompt, int position) {
         System.out.println(prompt);
         while (true) {
             String input = scanner.nextLine();
@@ -32,6 +43,7 @@ public class Team {
             }
         }
     }
+    
 
     public entities.Character getChar1() {
         return char1;

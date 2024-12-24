@@ -3,7 +3,7 @@ package game;
 import entities.Archers.Cito;
 import entities.Archers.Sagitta;
 import entities.Assassins.Mortem;
-import entities.Assassins.Trova;
+import entities.Assassins.Torva;
 import entities.Fighters.Tigris;
 import entities.Fighters.Ursi;
 import entities.Healers.Nutrix;
@@ -15,8 +15,8 @@ public class CharacterFactory {
         switch (name.toLowerCase()) {
             case "mortem":
                 return new Mortem(position);
-            case "trova":
-                return new Trova(position);
+            case "torva":
+                return new Torva(position);
             case "sanita":
                 return new Sanita(position);
             case "nutrix":

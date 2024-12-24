@@ -3,10 +3,15 @@ package entities.Fighters;
 import entities.Character;
 
 public abstract class Fighter extends Character {
+    protected double baseDefense;
+    protected double angerDefense;
     protected boolean anger;
-    public Fighter(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
-            int range, double critRate, double critDmg) {
+
+    public Fighter(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
+            int range, double critRate, int critDmg) {
         super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
+        baseDefense = defense;
+        angerDefense = defense * 1.3;
         anger = false;
     }
 
@@ -16,7 +21,7 @@ public abstract class Fighter extends Character {
     public void activateAnger() {
         if (!anger) {
             anger = true;
-            defense *= 1.3;// increases defense by %30.
+            defense = angerDefense;// increases defense by %30.
             System.out.println(
                     this.getClass().getSimpleName()
                             + " howls in anger as berserker rage overcomes him! His Defense has increased to "
@@ -28,7 +33,7 @@ public abstract class Fighter extends Character {
 
     public void deactivateAnger() {
         anger = false;
-        defense /= 1.3; // Revert defense to its original value
+        defense = baseDefense; // Revert defense to its original value
         System.out.println(this.getClass().getSimpleName() + " has calmed down. His Defense is reverted back to " + defense + " DEF\n");
     }
 

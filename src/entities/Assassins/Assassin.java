@@ -6,8 +6,8 @@ import game.Game;
 public abstract class Assassin extends Character {
     protected boolean stealth;
 
-    public Assassin(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
-            int range, double critRate, double critDmg) {
+    public Assassin(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
+            int range, double critRate, int critDmg) {
         super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
         stealth = false;
     }
@@ -15,7 +15,7 @@ public abstract class Assassin extends Character {
     // Assassin-specific methods
     // Sneak attack deals 50% more damage than a regular attack, and can only be
     // used if the Assassin is in stealth-mode.
-    public double sneakAttack(Character target) {
+    public int sneakAttack(Character target) {
         double bonusMultiplier = 1.5; // Sneak attacks deal 50% more damage
         System.out.println(
                 this.getClass().getSimpleName() + " suddenly appears from the darkness and does a sneak attack on "

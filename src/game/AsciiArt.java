@@ -29,15 +29,23 @@ public class AsciiArt {
         int DOTS = SIZE / 5;
         int maxSize = 0;
 
-        // Find the biggest sized position list. Basically, which position has the most characters
+        // Find the biggest sized position list. Basically, which position has the most
+        //
+        //
+        //
+        // characters
         for (Map.Entry<Integer, List<entities.Character>> entry : repeatedPosition.entrySet()) {
             int currentSize = entry.getValue().size();
             if (currentSize > maxSize) {
                 maxSize = currentSize;
             }
+            //
         }
+        //
 
-        // This prints the positions of all the characters, if they're on the same spot, they get stacked
+        //
+        // This prints the positions of all the characters, if they're on the same spot,
+        // they get stacked
         for (int j = maxSize - 1; j >= 0; --j) {
             System.out.print("|");
             for (int i = 0; i <= DOTS; ++i) {
@@ -68,20 +76,28 @@ public class AsciiArt {
         System.out.print("|");
         for (int i = 0; i <= DOTS; ++i) {
             if (charMap.containsValue(i * 5)) {
-                if (repeatedPosition.get(i * 5).get(0).isLiving_status()
-                        || repeatedPosition.get(i * 5).get(1).isLiving_status()) {
-                    System.out.print("@");
-                } else {
-                    Random random = new Random();
-                    int randomValue = random.nextInt(10);
-                    if (randomValue == 6) {
-                        System.out.print("🌱");
+                for (entities.Character aliveChars : repeatedPosition.get(i * 5)) {
+                    if (aliveChars.isLiving_status()) {
+                        System.out.print("@");
+                        break;
                     } else {
-                        System.out.print(" ");
+                        Random random = new Random();
+                        int randomValue = random.nextInt(10);
+                        if (randomValue == 6) {
+                            System.out.print(".");
+                        } else {
+                            System.out.print(" ");
+                        }
                     }
                 }
             } else {
-                System.out.print(" ");
+                Random random = new Random();
+                int randomValue = random.nextInt(10);
+                if (randomValue == 6) {
+                    System.out.print(".");
+                } else {
+                    System.out.print(" ");
+                }
             }
         }
         System.out.print("|\n");
