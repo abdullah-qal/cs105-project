@@ -8,7 +8,7 @@ public abstract class Fighter extends Character {
     protected boolean anger;
 
     public Fighter(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
-            int range, double critRate, int critDmg) {
+            int range, double critRate, double critDmg) {
         super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
         baseDefense = defense;
         angerDefense = defense * 1.3;

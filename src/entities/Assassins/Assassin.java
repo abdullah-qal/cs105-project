@@ -7,7 +7,7 @@ public abstract class Assassin extends Character {
     protected boolean stealth;
 
     public Assassin(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
-            int range, double critRate, int critDmg) {
+            int range, double critRate, double critDmg) {
         super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
         stealth = false;
     }
