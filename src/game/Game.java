@@ -80,6 +80,7 @@ public class Game {
 
             turn++;
             displayGameState(team1, team2);
+
             outerLoop: while (true) {
                 switch (input.nextLine().toLowerCase()) {
                     case "y" -> {
@@ -107,9 +108,11 @@ public class Game {
         while (true) {
             System.out.println("Select a character:");
             System.out.println("(1) " + team.getChar1().getClass().getSimpleName() + " ("
-                    + team.getChar1().getClass().getSuperclass().getSimpleName() + ")");
+                    + team.getChar1().getClass().getSuperclass().getSimpleName() + ") - " + team.getChar1().getHealth()
+                    + "/" + team.getChar1().getMaxHealth() + " HP - " + team.getChar1().getPosition() + "m");
             System.out.println("(2) " + team.getChar2().getClass().getSimpleName() + " (" +
-                    team.getChar2().getClass().getSuperclass().getSimpleName() + ")");
+                    team.getChar2().getClass().getSuperclass().getSimpleName() + ") - " + team.getChar2().getHealth()
+                    + "/" + team.getChar2().getMaxHealth() + " HP - " + team.getChar2().getPosition() + "m");
             String choice = input.nextLine();
             clearScreen();
             switch (choice) {
@@ -431,7 +434,7 @@ public class Game {
     // ------------------HELPER METHODS------------------//
     // Displays the current state of the game
     private static void displayGameState(Team team1, Team team2) {
-        System.out.println("The turn has concluded! The following is the current state of the game:");
+        System.out.println("The turn has concluded! The following is the current state of the game:\n");
         System.out.println("Team 1:");
         System.out.println(team1.getChar1().getClass().getSimpleName() + " - " + team1.getChar1().getHealth() + "HP"
                 + " - " + team1.getChar1().getPosition() + "m");
@@ -444,7 +447,8 @@ public class Game {
         System.out.println(
                 team2.getChar2().getClass().getSimpleName() + " - " + team2.getChar2().getHealth() + "HP" + " - "
                         + team2.getChar2().getPosition() + "m\n");
-        System.out.println("Would you like to continue? (y/n)");
+        AsciiArt.makeArt(team1, team2);
+        System.out.println("\nWould you like to continue? (y/n)");
     }
 
     // Displays the current stats of a character

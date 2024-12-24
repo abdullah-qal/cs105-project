@@ -19,6 +19,7 @@ public abstract class Character {
     protected boolean living_status;
     protected double critRate, critDmg;
     protected int coolDown;
+    private game.Team team; // Reference to the Team it is in
 
     public Character(int position, double damage, double health, double maxHealth, double defense, int movementSpeed,
             int range, double critRate, double critDmg) {
@@ -195,5 +196,13 @@ public abstract class Character {
         if (coolDown > 0) {
             coolDown--;
         }
+    }
+
+    public void setTeam(game.Team team) {
+        this.team = team;
+    }
+
+    public game.Team getTeam() {
+        return team;
     }
 }

@@ -8,6 +8,9 @@ public class Team {
     Team(entities.Character char1, entities.Character char2) {
         this.char1 = char1;
         this.char2 = char2;
+
+        char1.setTeam(this);
+        char2.setTeam(this);
     }
 
     static Team createTeam(Scanner input, int position) {
