@@ -2,15 +2,15 @@ package utilities;
 import entities.Character;
 public Desert extends Map{
     public Desert() {
-        super("Desert", "Movement speed decrease by 0.8,Range increase by 1.2, Defense decrease by 0.9.");
+        super("Desert", "Movement speed decrease 5,Range increase 5, Defense decrease by 0.9.");
     }
     public void applyEffects(Character[] characters) {
         for (Character character : characters) {
-            // Decrease movement speed by 0.8 due to the sand.
-            character.setMovementSpeed((int) (character.getMovementSpeed() * 0.8));
+            // Decrease movement speed 5 due to the sand.
+            character.setMovementSpeed((int) (character.getMovementSpeed() -5));
 
-            // Increase range by 1.2 because of the open terrain.
-            character.setRange((int) (character.getRange() * 1.2));
+            // Increase range by 5 because of the open terrain.
+            character.setRange((int) (character.getRange() +5 ));
 
             // Decrease defense by 0.9 due to the lack of cover.
             character.setDefense((int) (character.getDefense() * 0.9));
