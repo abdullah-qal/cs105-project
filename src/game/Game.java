@@ -23,6 +23,13 @@ public class Game {
                 case "y" -> {
                     clearScreen();
 
+                    // Map Selection
+                    Map selectedMap = selectMap(input);
+
+                    // Selecting weather randomly
+                    Weather currentWeather = Weather.getRandomWeather();
+                    System.out.println("Selected Map: " + selectedMap.getName());
+                    System.out.println("Weather Condition: " + currentWeather.getName() + " - " + currentWeather.getDescription());
                     System.out.println("Team 1, please select your characters.\n");
                     System.out.println("The currently supported characters are: \n");
                     System.out.println("Assassins: Mortem, Torva");
@@ -42,6 +49,11 @@ public class Game {
 
                     Team team2 = Team.createTeam(input, 200);
                     clearScreen();
+                    // Implementing weather and map effects.
+                    selectedMap.applyEffects(team1.getCharacters());
+                    selectedMap.applyEffects(team2.getCharacters());
+                    currentWeather.applyEffects(team1.getCharacters());
+                    currentWeather.applyEffects(team2.getCharacters());
                     gameCommences(team1, team2);
                     return;
                 }
@@ -58,6 +70,28 @@ public class Game {
                     clearScreen();
                     System.out.println("Invalid choice. Please select a valid input.\n");
                 }
+            }
+        }
+    }
+    // Map selection
+    private static Map selectMap(Scanner input) {
+        System.out.println("Select a map:");
+        System.out.println("(1) Desert");
+        System.out.println("(2) Garden");
+        System.out.println("(3) Mountain");
+
+        while (true) {
+            switch (input.nextLine()) {
+                case "1" -> {
+                    return new Desert();
+                }
+                case "2" -> {
+                    return new Garden();
+                }
+                case "3" -> {
+                    return new Mountain();
+                }
+                default -> System.out.println("Invalid choice. Please select a valid map.");
             }
         }
     }
