@@ -21,7 +21,7 @@ public abstract class Weather {
 
     // Static method to randomly select a weather condition
     public static Weather getRandomWeather() {
-        Weather[] weathers = {new SnowyWeather(), new RainyWeather(), new SunnyWeather()};
+        Weather[] weathers = {new SnowyWeather(), new RainyWeather(), new SunnyWeather(), new WindyWeather, new FoggyWeather};
         Random random = new Random();
         return weathers[random.nextInt(weathers.length)];
     }
