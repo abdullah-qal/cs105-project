@@ -1,13 +1,66 @@
 package game;
 
-// This class will be used for team formation. I don't believe much will go here otherwise.
-public class Team {
-    private Character character1;
-    private Character character2; // Both characters are chosen 
+import java.util.Scanner;
 
-    public Team(Character character1, Character character2) {
-        this.character1 = character1;
-        this.character2 = character2;
+public class Team {
+    private entities.Character char1, char2;
+
+    Team(entities.Character char1, entities.Character char2) {
+        this.char1 = char1;
+        this.char2 = char2;
+
+        char1.setTeam(this);
+        char2.setTeam(this);
     }
-    // Extend this as needed
+
+    static Team createTeam(Scanner input, int position) {
+        entities.Character char1;
+        entities.Character char2;
+    
+        while (true) {
+            char1 = getCharacter(input, "Enter the first character: ", position);
+            char2 = getCharacter(input, "Enter the second character: ", position);
+    
+            // Checks if the characters are the same
+            if (!char1.getClass().equals(char2.getClass())) {
+                break; 
+            }
+            Game.clearScreen();
+            System.out.println("Characters must be different. Please re-enter the characters.\n");
+            
+            System.out.println("The currently supported characters are: \n");
+            System.out.println("Assassins: Mortem, Torva");
+            System.out.println("Archers: Cito, Sagitta");
+            System.out.println("Fighters: Tigris, Ursi");
+            System.out.println("Healers: Nutrix, Sanita\n");
+            System.out.println("Wizards: Kanzo, Urla\n");
+        }
+    
+        return new Team(char1, char2);
+    }
+    
+    private static entities.Character getCharacter(Scanner scanner, String prompt, int position) {
+        System.out.println(prompt);
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                return CharacterFactory.createCharacter(input, position);
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid character. Please try again.");
+            }
+        }
+    }
+    
+
+    public entities.Character getChar1() {
+        return char1;
+    }
+
+    public entities.Character getChar2() {
+        return char2;
+    }
+
+    public boolean isTeamAlive() {
+        return char1.isLiving_status() || char2.isLiving_status();
+    }
 }
