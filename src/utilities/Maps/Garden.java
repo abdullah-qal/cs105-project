@@ -12,7 +12,7 @@ public class Garden extends Map{
         Random random = new Random();
             character.setDefense(character.getDefense() + 20);
             if (character instanceof Healer healer && random.nextInt(100) < 15) { // 20% chance of healing zone boost
-                healer.setHealAmount(healer.getHealAmount() * 1.5);
+                healer.setHealAmount((int) (healer.getHealAmount() * 1.5));
                 System.out.println("A healing zone boosts " + healer.getClass().getSimpleName() + "'s healing!");
             }
             if (random.nextInt(100) < 20) { // 20% chance for slow due to overgrowth

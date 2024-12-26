@@ -2,219 +2,75 @@ package entities;
 
 import java.util.Scanner;
 
+import entities.Archers.*;
+import entities.Fighters.*;
+import entities.Healers.*;
+import entities.Wizards.*;
+import entities.Assassins.*;
+
+import game.*;
+
 public class CharacterInfo {
 
     public static void getInfo(Scanner input) {
-
         while (true) {
-            System.out.println("The currently supported characters are: \n");
-            System.out.println("Assassins: Mortem, Torva");
-            System.out.println("Archers: Cito, Sagitta");
-            System.out.println("Fighters: Tigris, Ursi");
-            System.out.println("Healers: Nutrix, Sanita");
-            System.out.println("Wizards: Kanzo, Ulra\n");
-
+            supportedCharacters();
             System.out.println("Which character would you like to learn more about? (Type q to return)");
             String choice = input.nextLine().toLowerCase();
-
+    
             if (choice.equals("q")) {
-                clearScreen();
-                return;
+                Game.clearScreen();
+                break; 
             }
-
-            clearScreen();
-            // TODO: Make this more maintainable by defining constants for these values in
-            // the respective Character classes
-            switch (choice) {
-                case "mortem":
-                    System.out.println(
-                            """
-                            A shadow on the battlefield, Mortem strikes swiftly and silently, leaving enemies no chance to react.
-                            With unmatched agility and lethal precision, he dominates the night.
-
-                            Damage: 85 DMG
-                            Max health: 200 HP
-                            Defense: 20 DEF
-                            Movement Speed: 45 m/turn
-                            Range: 10 m
-                            Crit Rate: 5%
-                            Crit Damage: 60%
-                            Special Abilities: Sneak Attack, Stealth Mode
-                                        """);
+    
+            Character[] characters = { new Mortem(0), new Torva(0), new Cito(0), new Sagitta(0), new Tigris(0),
+                    new Ursi(0), new Nutrix(0), new Sanita(0), new Kanzo(0), new Ulra(0) };
+    
+            boolean found = false; 
+            for (Character character : characters) {
+                if (character.getClass().getSimpleName().toLowerCase().equals(choice)) {
+                    Game.clearScreen();
+                    System.out.printf(character.toString());
+                    System.out.printf("Damage: %.2f DMG%n", Character.normalisedValue(character.getDamage()));
+                    System.out.printf("Max Health: %.2f HP%n", Character.normalisedValue(character.getMaxHealth()));
+                    System.out.printf("Defense: %.2f DEF%n", character.getDefense());
+                    System.out.printf("Movement Speed: %d m/turn%n", character.getMovementSpeed());
+                    System.out.printf("Range: %d m%n", character.getRange());
+                    System.out.printf("Crit Rate: %.2f%%%n", character.getCritRate());
+                    System.out.printf("Crit Damage: %.2f%%%n", character.getCritDmg());
+                    if (character instanceof Healer healer) {
+                        System.out.printf("Healing Amount: %.2f HP%n", Character.normalisedValue(healer.getHealAmount()));
+                        System.out.printf("Divine Healing Rate: %d%%%n", healer.getDivineHealChance());
+                    }
+                    found = true; 
                     break;
-
-                case "torva":
-                    System.out.println(
-                            """
-                            Deadly and elusive, Torva is the assassin who never misses her mark.
-                            Her sneak attacks are the stuff of legend, and her foes tremble in fear before they see her coming.
-
-                            Damage: 65 DMG
-                            Max health: 250 HP
-                            Defense: 35 DEF
-                            Movement Speed: 45 m/turn
-                            Range: 10 m
-                            Crit Rate: 15%
-                            Crit Damage: 45%
-                            Special Abilities: Sneak Attack, Stealth Mode
-                                    """);
-                    break;
-
-                case "cito":
-                    System.out.println(
-                            """
-                            Cito, the eagle-eyed archer, reigns supreme from a distance. His arrows fly true, striking
-                            with uncanny accuracy and leaving his enemies in awe.
-
-                            Damage: 60 DMG
-                            Max health: 150 HP
-                            Defense: 15 DEF
-                            Movement Speed: 35 m/turn
-                            Range: 50 m
-                            Crit Rate: 25%
-                            Crit Damage: 50%
-                            Special Abilities: Great Sight
-                                                                """);
-                    break;
-
-                case "sagitta":
-                    System.out.println("""
-                            Sagitta is a sharpshooter of unparalleled skill. With vision as sharp as her aim, she
-                            dominates the battlefield from incredible distances, where no enemy is safe.
-
-                            Damage: 45 DMG
-                            Max health: 150 HP
-                            Defense: 20 DEF
-                            Movement Speed: 25 m/turn
-                            Range: 75 m
-                            Crit Rate: 35%
-                            Crit Damage: 40%
-                            Special Abilities: Great Sight
-                            """);
-                    break;
-
-                case "tigris":
-                    System.out.println("""
-                            A juggernaut of strength and resilience, Tigris charges into battle with relentless fury. His sheer
-                                                                                                                 power and endurance make him a force to be reckoned with.
-
-                            Damage: 35 DMG
-                            Max health: 350 HP
-                            Defense: 40 DEF
-                            Movement Speed: 35 m/turn
-                            Range: 15 m
-                            Crit Rate: 10%
-                            Crit Damage: 65%
-                            Special Abilities: Berserker Anger
-                            """);
-                    break;
-
-                case "ursi":
-                    System.out.println("""
-                            Ursi, the indomitable warrior, is a bastion of brute strength. With unyielding force and an 
-                            iron will, he crushes his foes in relentless combat.
-
-                            Damage: 20 DMG
-                            Max health: 450 HP
-                            Defense: 50 DEF
-                            Movement Speed: 30 m/turn
-                            Range: 15 m
-                            Crit Rate: 15%
-                            Crit Damage: 50%
-                            Special Abilities: Berserker Anger
-                            """);
-                    break;
-
-                case "nutrix":
-                    System.out.println("""
-                           The gentle healer, Nutrix, is a beacon of hope on the battlefield. Her divine touch
-                            restores life and bolsters her allies when they need it most.
-
-                            Damage: 15 DMG
-                            Max Health: 275 HP
-                            Defense: 20 DEF
-                            Movement Speed: 15 m/turn
-                            Range: 60 m
-                            Crit Rate: 0%
-                            Crit Damage: 0%
-
-                            Healing Amount: 35 HP
-                            Divine Heal Rate: 20%
-                            Special Abilities: Heal
-                            """);
-                    break;
-
-                case "sanita":
-                    System.out.println("""
-                            Sanita wields the power of healing with unmatched expertise. Her restorative 
-                            abilities turn the tide of battle, making her an indispensable ally.
-
-                            Damage: 15 DMG
-                            Max Health: 200 HP
-                            Defense: 20 DEF
-                            Movement Speed: 15 m/turn
-                            Range: 60 m
-                            Crit Rate: 0%
-                            Crit Damage: 0%
-
-                            Healing Amount: 50 HP
-                            Divine Heal Rate: 5%
-                            Special Abilities: Heal
-                            """);
-                    break;
-
-                case "kanzo":
-                    System.out.println("""
-                            A wizard with the ultimate sacrificial ability, Kanzo unleashes devastating power
-                            at the cost of his own life, halving the health of all enemies.
-
-                            Damage: 40 DMG
-                            Max health: 350 HP
-                            Defense: 30 DEF
-                            Movement Speed: 20 m/turn
-                            Range: 15 m
-                            Crit Rate: 10%
-                            Crit Damage: 50%
-                            Special Abilities: Explosion (Halves enemies' health, sacrifices self)
-                            """);
-                    break;
-
-                case "ulra":
-                    System.out.println("""
-                            Ulra wields powerful magic to unleash devastating explosions that deal significant
-                            damage to all enemies without sacrificing herself.
-
-                            Damage: 50 DMG
-                            Max health: 250 HP
-                            Defense: 20 DEF
-                            Movement Speed: 30 m/turn
-                            Range: 25 m
-                            Crit Rate: 15%
-                            Crit Damage: 40%
-                            Special Abilities: Explosion (Deals 100 damage to enemies)
-                            """);
-                    break;
-
-                default:
-                    clearScreen();
-                    System.out.println("Invalid choice. Please select a valid character.\n");
-                    continue;
+                }
             }
-
+    
+            if (!found) {
+                Game.clearScreen();
+                System.out.println("Invalid choice. Please select a valid character.\n");
+            }
+    
             System.out.println("Would you like to view another character's stats? (y/n)");
             String anotherChoice = input.nextLine().toLowerCase();
-            clearScreen();
-
+            Game.clearScreen();
+    
             if (anotherChoice.equals("n")) {
-                return;
+                break; 
             } else if (!anotherChoice.equals("y")) {
                 System.out.println("Invalid input. Returning to character selection.\n");
             }
         }
     }
+    
 
-    private static void clearScreen() {
-        System.out.print("\033[H\033[2J\033[3J");
-        System.out.flush();
+    public static void supportedCharacters() {
+        System.out.println("The currently supported characters are: \n");
+        System.out.println("Assassins: Mortem, Torva");
+        System.out.println("Archers: Cito, Sagitta");
+        System.out.println("Fighters: Tigris, Ursi");
+        System.out.println("Healers: Nutrix, Sanita");
+        System.out.println("Wizards: Kanzo, Ulra\n");
     }
 }

@@ -6,11 +6,11 @@ import entities.Character;
 import game.Game;
 
 public abstract class Healer extends Character {
-    protected double healAmount;
+    protected int healAmount;
     protected int divineHealChance;
 
     public Healer(int position, int damage, int health, int maxHealth, double defense, int movementSpeed,
-            int range, double critRate, double critDmg, double healAmount, int divineHealChance) {
+            int range, double critRate, double critDmg, int healAmount, int divineHealChance) {
         super(position, damage, health, maxHealth, defense, movementSpeed, range, critRate, critDmg);
         this.healAmount = healAmount * HEALTH_MULTIPLIER;
         this.divineHealChance = divineHealChance;
@@ -72,6 +72,15 @@ public abstract class Healer extends Character {
         }
         return true;
     }
-    public double getHealAmount() { return healAmount; }
-    public void setHealAmount(double healAmount) { this.healAmount = healAmount; }
+
+    public int getHealAmount() {
+        return healAmount;
+    }
+    public int getDivineHealChance() {
+        return divineHealChance;
+    }
+
+    public void setHealAmount(int healAmount) {
+        this.healAmount = healAmount;
+    }
 }

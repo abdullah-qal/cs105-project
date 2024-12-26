@@ -2,6 +2,7 @@ package game;
 
 import java.util.Scanner;
 
+import entities.CharacterInfo;
 import entities.Archers.Archer;
 import entities.Assassins.Assassin;
 import entities.Fighters.Fighter;
@@ -16,6 +17,7 @@ public class Game {
     final static String RED = "\033[31m";
     final static String GREEN = "\033[32m"; // ANSI escape codes for colouring purposes
     final static int WEATHER_COOLDOWN = 5;
+
     // ------------------GAMEPLAY METHODS------------------//
     // Starts the game
 
@@ -33,26 +35,17 @@ public class Game {
 
                     clearScreen();
                     System.out.println("Team 1, please select your characters.\n");
-                    System.out.println("The currently supported characters are: \n");
-                    System.out.println("Assassins: Mortem, Torva");
-                    System.out.println("Archers: Cito, Sagitta");
-                    System.out.println("Fighters: Tigris, Ursi");
-                    System.out.println("Healers: Nutrix, Sanita");
-                    System.out.println("Wizards: Kanzo, Ulra\n");
+                    CharacterInfo.supportedCharacters();
 
                     Team team1 = Team.createTeam(input, 0);
+
                     clearScreen();
                     System.out.println("Team 2, please select your characters.\n");
+                    CharacterInfo.supportedCharacters();
 
-                    System.out.println("The currently supported characters are: \n");
-                    System.out.println("Assassins: Mortem, Torva");
-                    System.out.println("Archers: Cito, Sagitta");
-                    System.out.println("Fighters: Tigris, Ursi");
-                    System.out.println("Healers: Nutrix, Sanita");
-                    System.out.println("Wizards: Kanzo, Ulra\n");
                     Team team2 = Team.createTeam(input, 200);
-                    clearScreen();
 
+                    clearScreen();
                     gameCommences(team1, team2, selectedMap);
                     return;
                 }
@@ -100,25 +93,34 @@ public class Game {
     private static void gameCommences(Team team1, Team team2, Map selectedMap) {
         Scanner input = new Scanner(System.in);
         int turn = 1;
-        int weather_cooldown = 5;
+        int weather_cooldown = 5; // Initial cooldown to trigger weather on first turn
+        int weatherDuration = 0; // Tracks how long the current weather lasts
+        Weather currentWeather = null;
 
+        // Initial map effects applied once
         selectedMap.applyEffects(team1.getChar1());
         selectedMap.applyEffects(team1.getChar2());
         selectedMap.applyEffects(team2.getChar1());
-        selectedMap.applyEffects(team2.getChar2()); // only applies once
+        selectedMap.applyEffects(team2.getChar2());
 
         while (true) {
             System.out.println("|-------- TURN " + turn + " --------|");
-            Weather weather = null;
-            if (weather_cooldown == WEATHER_COOLDOWN) {
-                weather = Weather.getRandomWeather();
-                System.out.println("The weather is now " + weather.getName() + "\n");
-                applyEffects(team1, team2, weather);
-                weather_cooldown = 0;
+
+            // Apply weather effects if cooldown is complete
+            if (weather_cooldown == 5) {
+                currentWeather = Weather.getRandomWeather();
+                System.out.println("The weather is now " + currentWeather.getName() + "\n");
+                applyEffects(team1, team2, currentWeather);
+                weather_cooldown = 0; 
+                weatherDuration = 5;
             }
-            if (turn >= WEATHER_COOLDOWN) {
-                removeEffects(team1, team2, weather);
+
+            // Remove weather effects if duration ends
+            if (weatherDuration == 0 && currentWeather != null) {
+                removeEffects(team1, team2, currentWeather);
+                currentWeather = null; 
             }
+
             // Team 1 plays
             if (!takeTurn(input, team1, team2, "Team 1")) {
                 System.out.printf("Team 1 wins! The game lasted for %d turns.%n", turn);
@@ -132,12 +134,17 @@ public class Game {
             }
 
             reduceCooldowns(team1, team2);
+            if (weatherDuration > 0) {
+                weatherDuration--;
+            }
 
             displayGameState(team1, team2);
+
             if (!promptToContinue(input)) {
                 System.out.println("Thanks for playing!");
                 break;
             }
+
             weather_cooldown++;
             turn++;
         }
