@@ -4,8 +4,6 @@ import java.util.Random;
 import java.util.Scanner;
 import java.util.InputMismatchException;
 
-// TODO: Clean up this class and implement all the subclasses of Character
-// TODO: Fix the order of the constructors' parameters in the subclasses and make them uniform
 import game.*;
 
 public abstract class Character {
@@ -174,9 +172,12 @@ public abstract class Character {
     public void setHealth(int health) { this.health = health; }
     public void setCoolDown(int coolDown) { this.coolDown = coolDown; }
     public void setTeam(game.Team team) { this.team = team; }
+    public void setMovementSpeed(int movementSpeed) { this.movementSpeed = movementSpeed; }
+    public void setDefense(double defense) { this.defense = defense; }
     public void decrementCooldown() { if (coolDown > 0) coolDown--; }
-
-
+    public void setRange(int range) { this.range = range; }
+    public void setDamage(int damage) { this.damage = damage; }
+    public void setMaxHealth(int maxHealth) { this.maxHealth = maxHealth; }
     // Gets the actual value back for printing purposes
     public static double normalisedValue(int x) {
         return (double) x / (double) HEALTH_MULTIPLIER;

@@ -1,4 +1,5 @@
-package utilities;
+package Maps;
+
 import entities.Character;
 
 public abstract class Map {
@@ -17,5 +18,5 @@ public abstract class Map {
     public String getDescription() {
         return description;
     }
-    public abstract void applyEffects(Character[] characters);
+    public abstract void applyEffects(Character character);
 }

@@ -72,4 +72,6 @@ public abstract class Healer extends Character {
         }
         return true;
     }
+    public double getHealAmount() { return healAmount; }
+    public void setHealAmount(double healAmount) { this.healAmount = healAmount; }
 }

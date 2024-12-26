@@ -32,9 +32,9 @@ public class Team {
             System.out.println("Assassins: Mortem, Torva");
             System.out.println("Archers: Cito, Sagitta");
             System.out.println("Fighters: Tigris, Ursi");
-            System.out.println("Healers: Nutrix, Sanita");
-            System.out.println("Wizards: Kanzo, Ulra\n");
-
+            System.out.println("Healers: Nutrix, Sanita\n");
+            System.out.println("Wizards: Kanzo, Urla\n");
+        }
     
         return new Team(char1, char2);
     }

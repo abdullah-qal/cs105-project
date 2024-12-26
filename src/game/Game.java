@@ -6,11 +6,16 @@ import entities.Archers.Archer;
 import entities.Assassins.Assassin;
 import entities.Fighters.Fighter;
 import entities.Healers.Healer;
+import entities.Wizards.Wizard;
+
+import Weathers.*;
+import Maps.*;
 
 public class Game {
     final static String RESET = "\033[0m";
     final static String RED = "\033[31m";
     final static String GREEN = "\033[32m"; // ANSI escape codes for colouring purposes
+    final static int WEATHER_COOLDOWN = 5;
     // ------------------GAMEPLAY METHODS------------------//
     // Starts the game
 
@@ -26,10 +31,7 @@ public class Game {
                     // Map Selection
                     Map selectedMap = selectMap(input);
 
-                    // Selecting weather randomly
-                    Weather currentWeather = Weather.getRandomWeather();
-                    System.out.println("Selected Map: " + selectedMap.getName());
-                    System.out.println("Weather Condition: " + currentWeather.getName() + " - " + currentWeather.getDescription());
+                    clearScreen();
                     System.out.println("Team 1, please select your characters.\n");
                     System.out.println("The currently supported characters are: \n");
                     System.out.println("Assassins: Mortem, Torva");
@@ -50,17 +52,8 @@ public class Game {
                     System.out.println("Wizards: Kanzo, Ulra\n");
                     Team team2 = Team.createTeam(input, 200);
                     clearScreen();
-                    // Implementing map and weather effects on characters.
-                    selectedMap.applyEffects(team1.getCharacters());
-                    selectedMap.applyEffects(team2.getCharacters());
-                    currentWeather.applyEffects(team1.getCharacters());
-                    currentWeather.applyEffects(team2.getCharacters());
-                    // Implementing weather and map effects.
-                    selectedMap.applyEffects(team1.getCharacters());
-                    selectedMap.applyEffects(team2.getCharacters());
-                    currentWeather.applyEffects(team1.getCharacters());
-                    currentWeather.applyEffects(team2.getCharacters());
-                    gameCommences(team1, team2);
+
+                    gameCommences(team1, team2, selectedMap);
                     return;
                 }
                 case "n" -> {
@@ -79,31 +72,10 @@ public class Game {
             }
         }
     }
+
     // Map selection
     private static Map selectMap(Scanner input) {
-        System.out.println("Select a map:");
-        System.out.println("(1) Desert");
-        System.out.println("(2) Garden");
-        System.out.println("(3) Mountain");
-
-        while (true) {
-            switch (input.nextLine()) {
-                case "1" -> {
-                    return new Desert();
-                }
-                case "2" -> {
-                    return new Garden();
-                }
-                case "3" -> {
-                    return new Mountain();
-                }
-                default -> System.out.println("Invalid choice. Please select a valid map.");
-            }
-        }
-    }
-    // A method for user to select map.
-    private static Map selectMap(Scanner input) {
-        System.out.println("Select a map:");
+        System.out.println("Select the map that you will be playing in:");
         System.out.println("(1) Desert");
         System.out.println("(2) Garden");
         System.out.println("(3) Mountain");
@@ -125,41 +97,55 @@ public class Game {
     }
 
     // Manages the game loop
-    private static void gameCommences(Team team1, Team team2) {
+    private static void gameCommences(Team team1, Team team2, Map selectedMap) {
         Scanner input = new Scanner(System.in);
         int turn = 1;
-    
+        int weather_cooldown = 5;
+
+        selectedMap.applyEffects(team1.getChar1());
+        selectedMap.applyEffects(team1.getChar2());
+        selectedMap.applyEffects(team2.getChar1());
+        selectedMap.applyEffects(team2.getChar2()); // only applies once
+
         while (true) {
             System.out.println("|-------- TURN " + turn + " --------|");
-    
+            Weather weather = null;
+            if (weather_cooldown == WEATHER_COOLDOWN) {
+                weather = Weather.getRandomWeather();
+                System.out.println("The weather is now " + weather.getName() + "\n");
+                applyEffects(team1, team2, weather);
+                weather_cooldown = 0;
+            }
+            if (turn >= WEATHER_COOLDOWN) {
+                removeEffects(team1, team2, weather);
+            }
             // Team 1 plays
             if (!takeTurn(input, team1, team2, "Team 1")) {
-                System.out.println("Team 1 wins! The game lasted for " + turn + " turns.");
+                System.out.printf("Team 1 wins! The game lasted for %d turns.%n", turn);
                 break;
             }
-    
+
             // Team 2 plays
             if (!takeTurn(input, team2, team1, "Team 2")) {
-                System.out.println("Team 2 wins! The game lasted for " + turn + " turns.");
+                System.out.printf("Team 2 wins! The game lasted for %d turns.%n", turn);
                 break;
             }
-    
+
             reduceCooldowns(team1, team2);
-    
+
             displayGameState(team1, team2);
             if (!promptToContinue(input)) {
                 System.out.println("Thanks for playing!");
                 break;
             }
-    
+            weather_cooldown++;
             turn++;
         }
     }
-    
+
     private static boolean takeTurn(Scanner input, Team currentTeam, Team opponentTeam, String teamName) {
         System.out.println(teamName + " to play.");
         while (true) {
-
             System.out.println("Select a character:");
             System.out.printf("(1) %s (%s) - %.2f/%.2f HP%n",
                     currentTeam.getChar1().getClass().getSimpleName(),
@@ -171,122 +157,27 @@ public class Game {
                     currentTeam.getChar2().getClass().getSuperclass().getSimpleName(),
                     entities.Character.normalisedValue(currentTeam.getChar2().getHealth()),
                     entities.Character.normalisedValue(currentTeam.getChar2().getMaxHealth()));
-            
+
             String choice = input.nextLine();
             clearScreen();
-    
+
             entities.Character selectedChar = switch (choice) {
                 case "1" -> currentTeam.getChar1();
                 case "2" -> currentTeam.getChar2();
                 default -> null;
             };
-    
+
             if (selectedChar == null) {
                 System.out.println("Invalid choice. Please select a valid input.\n");
                 continue;
             }
-    
+
             if (!selectedChar.isLiving_status()) {
-                System.out.println(selectedChar.getClass().getSimpleName() + " is already dead! Choose a different character\n");
+                System.out.println(
+                        selectedChar.getClass().getSimpleName() + " is already dead! Choose a different character\n");
                 continue;
             }
-    
-            if (performAction(input, selectedChar, currentTeam, opponentTeam)) {
-                break;
-            }
-        }
-        return opponentTeam.isTeamAlive();
-    }
-    // Map selection
-    private static Map selectMap(Scanner input) {
-        System.out.println("Select a map:");
-        System.out.println("(1) Desert");
-        System.out.println("(2) Garden");
-        System.out.println("(3) Mountain");
 
-        while (true) {
-            switch (input.nextLine()) {
-                case "1" -> {
-                    return new Desert();
-                }
-                case "2" -> {
-                    return new Garden();
-                }
-                case "3" -> {
-                    return new Mountain();
-                }
-                default -> System.out.println("Invalid choice. Please select a valid map.");
-            }
-        }
-    }
-
-    // Manages the game loop
-    private static void gameCommences(Team team1, Team team2) {
-        Scanner input = new Scanner(System.in);
-        int turn = 1;
-    
-        while (true) {
-            System.out.println("|-------- TURN " + turn + " --------|");
-    
-            // Team 1 plays
-            if (!takeTurn(input, team1, team2, "Team 1")) {
-                System.out.println("Team 1 wins! The game lasted for " + turn + " turns.");
-                break;
-            }
-    
-            // Team 2 plays
-            if (!takeTurn(input, team2, team1, "Team 2")) {
-                System.out.println("Team 2 wins! The game lasted for " + turn + " turns.");
-                break;
-            }
-    
-            reduceCooldowns(team1, team2);
-    
-            displayGameState(team1, team2);
-            if (!promptToContinue(input)) {
-                System.out.println("Thanks for playing!");
-                break;
-            }
-    
-            turn++;
-        }
-    }
-    
-    private static boolean takeTurn(Scanner input, Team currentTeam, Team opponentTeam, String teamName) {
-        System.out.println(teamName + " to play.");
-        while (true) {
-
-            System.out.println("Select a character:");
-            System.out.printf("(1) %s (%s) - %.2f/%.2f HP%n",
-                    currentTeam.getChar1().getClass().getSimpleName(),
-                    currentTeam.getChar1().getClass().getSuperclass().getSimpleName(),
-                    entities.Character.normalisedValue(currentTeam.getChar1().getHealth()),
-                    entities.Character.normalisedValue(currentTeam.getChar1().getMaxHealth()));
-            System.out.printf("(2) %s (%s) - %.2f/%.2f HP%n",
-                    currentTeam.getChar2().getClass().getSimpleName(),
-                    currentTeam.getChar2().getClass().getSuperclass().getSimpleName(),
-                    entities.Character.normalisedValue(currentTeam.getChar2().getHealth()),
-                    entities.Character.normalisedValue(currentTeam.getChar2().getMaxHealth()));
-            
-            String choice = input.nextLine();
-            clearScreen();
-    
-            entities.Character selectedChar = switch (choice) {
-                case "1" -> currentTeam.getChar1();
-                case "2" -> currentTeam.getChar2();
-                default -> null;
-            };
-    
-            if (selectedChar == null) {
-                System.out.println("Invalid choice. Please select a valid input.\n");
-                continue;
-            }
-    
-            if (!selectedChar.isLiving_status()) {
-                System.out.println(selectedChar.getClass().getSimpleName() + " is already dead! Choose a different character\n");
-                continue;
-            }
-    
             if (performAction(input, selectedChar, currentTeam, opponentTeam)) {
                 break;
             }
@@ -306,7 +197,6 @@ public class Game {
             System.out.printf("(5) Perform a special ability%n");
             System.out.printf("(6) Retrieve current stats about a character%n");
             System.out.printf("(7) Return to character selection menu%n");
-            
 
             String choice = input.nextLine();
             switch (choice) {
@@ -367,7 +257,6 @@ public class Game {
             System.out.printf("(3) %s%n", opponentTeam.getChar1().getClass().getSimpleName());
             System.out.printf("(4) %s%n", opponentTeam.getChar2().getClass().getSimpleName());
             System.out.printf("(5) Return to action menu%n");
-            
 
             String choice = input.nextLine();
             clearScreen();
@@ -460,7 +349,6 @@ public class Game {
             System.out.printf("(1) %s%n", opponentTeam.getChar1().getClass().getSimpleName());
             System.out.printf("(2) %s%n", opponentTeam.getChar2().getClass().getSimpleName());
             System.out.printf("(3) Return to Attack menu%n");
-            
 
             String choice = input.nextLine();
             clearScreen();
@@ -571,7 +459,7 @@ public class Game {
             System.out.printf("(1) Yourself%n");
             System.out.printf("(2) %s%n", teamMate.getClass().getSimpleName());
             System.out.printf("(3) Return to special actions menu%n");
-            
+
             String choice = input.nextLine();
             clearScreen();
             switch (choice) {
@@ -595,6 +483,7 @@ public class Game {
             }
         }
     }
+
     private static boolean wizardSpecialAbility(Scanner input, Wizard wizard, Team opponentTeam) {
         while (true) {
             System.out.println("Which of the following special moves would you like to perform?");
@@ -621,40 +510,39 @@ public class Game {
         }
     }
 
-
     // ------------------HELPER METHODS------------------//
     // Displays the current state of the game
     private static void displayGameState(Team team1, Team team2) {
         System.out.printf("The turn has concluded! The following is the current state of the game:%n%n");
 
         System.out.printf("%sTeam 1%s:%n", RED, RESET);
-        System.out.printf("%s%c%s%s - %s/%s HP - %d m%n", RED, 
-            team1.getChar1().getClass().getSimpleName().charAt(0), RESET, 
-            team1.getChar1().getClass().getSimpleName().substring(1),
-            entities.Character.normalisedValue(team1.getChar1().getHealth()), 
-            entities.Character.normalisedValue(team1.getChar1().getMaxHealth()), 
-            team1.getChar1().getPosition());
-        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n%n", RED, 
-            team1.getChar2().getClass().getSimpleName().charAt(0), RESET,
-            team1.getChar2().getClass().getSimpleName().substring(1),
-            entities.Character.normalisedValue(team1.getChar2().getHealth()),
-            entities.Character.normalisedValue(team1.getChar2().getMaxHealth()),
-            team1.getChar2().getPosition());
-        
+        System.out.printf("%s%c%s%s - %s/%s HP - %d m%n", RED,
+                team1.getChar1().getClass().getSimpleName().charAt(0), RESET,
+                team1.getChar1().getClass().getSimpleName().substring(1),
+                entities.Character.normalisedValue(team1.getChar1().getHealth()),
+                entities.Character.normalisedValue(team1.getChar1().getMaxHealth()),
+                team1.getChar1().getPosition());
+        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n%n", RED,
+                team1.getChar2().getClass().getSimpleName().charAt(0), RESET,
+                team1.getChar2().getClass().getSimpleName().substring(1),
+                entities.Character.normalisedValue(team1.getChar2().getHealth()),
+                entities.Character.normalisedValue(team1.getChar2().getMaxHealth()),
+                team1.getChar2().getPosition());
+
         System.out.printf("%sTeam 2%s:%n", GREEN, RESET);
-        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n", GREEN, 
-            team2.getChar1().getClass().getSimpleName().charAt(0), RESET, 
-            team2.getChar1().getClass().getSimpleName().substring(1),
-            entities.Character.normalisedValue(team2.getChar1().getHealth()), 
-            entities.Character.normalisedValue(team2.getChar1().getMaxHealth()), 
-            team2.getChar1().getPosition());
-        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n%n", GREEN, 
-            team2.getChar2().getClass().getSimpleName().charAt(0), RESET, 
-            team2.getChar2().getClass().getSimpleName().substring(1),
-            entities.Character.normalisedValue(team2.getChar2().getHealth()),
-            entities.Character.normalisedValue(team2.getChar2().getMaxHealth()),
-            team2.getChar2().getPosition());
-        
+        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n", GREEN,
+                team2.getChar1().getClass().getSimpleName().charAt(0), RESET,
+                team2.getChar1().getClass().getSimpleName().substring(1),
+                entities.Character.normalisedValue(team2.getChar1().getHealth()),
+                entities.Character.normalisedValue(team2.getChar1().getMaxHealth()),
+                team2.getChar1().getPosition());
+        System.out.printf("%s%c%s%s - %.2f/%.2f HP - %d m%n%n", GREEN,
+                team2.getChar2().getClass().getSimpleName().charAt(0), RESET,
+                team2.getChar2().getClass().getSimpleName().substring(1),
+                entities.Character.normalisedValue(team2.getChar2().getHealth()),
+                entities.Character.normalisedValue(team2.getChar2().getMaxHealth()),
+                team2.getChar2().getPosition());
+
         AsciiArt.makeArt(team1, team2);
     }
 
@@ -662,11 +550,11 @@ public class Game {
     private static void displayCharacterStats(Scanner input, entities.Character character) {
         System.out.printf("Current stats of %s:%n", character.getClass().getSimpleName());
         System.out.printf("Current Position: %d m%n", character.getPosition());
-        System.out.printf("Health: %.2f/%.2f HP%n", 
-                          entities.Character.normalisedValue(character.getHealth()), 
-                          entities.Character.normalisedValue(character.getMaxHealth()));
-        System.out.printf("Damage: %s DMG%n", 
-                          entities.Character.normalisedValue(character.getDamage()));
+        System.out.printf("Health: %.2f/%.2f HP%n",
+                entities.Character.normalisedValue(character.getHealth()),
+                entities.Character.normalisedValue(character.getMaxHealth()));
+        System.out.printf("Damage: %s DMG%n",
+                entities.Character.normalisedValue(character.getDamage()));
         System.out.printf("Defense: %.2f DEF%n", character.getDefense());
         System.out.printf("Movement Speed: %d m/turn%n", character.getMovementSpeed());
         System.out.printf("Range: %d m%n", character.getRange());
@@ -696,6 +584,7 @@ public class Game {
             }
         }
     }
+
     // prompts if you want to continue
     private static boolean promptToContinue(Scanner input) {
         while (true) {
@@ -713,12 +602,27 @@ public class Game {
             }
         }
     }
+
     // For maanging cooldowns
     private static void reduceCooldowns(Team team1, Team team2) {
         reduceCooldown(team1.getChar1());
         reduceCooldown(team1.getChar2());
         reduceCooldown(team2.getChar1());
         reduceCooldown(team2.getChar2());
+    }
+
+    private static void applyEffects(Team team1, Team team2, Weather currentWeather) {
+        currentWeather.applyEffects(team1.getChar1());
+        currentWeather.applyEffects(team1.getChar2());
+        currentWeather.applyEffects(team2.getChar1());
+        currentWeather.applyEffects(team2.getChar2());
+    }
+
+    private static void removeEffects(Team team1, Team team2, Weather currentWeather) {
+        currentWeather.removeEffects(team1.getChar1());
+        currentWeather.removeEffects(team1.getChar2());
+        currentWeather.removeEffects(team2.getChar1());
+        currentWeather.removeEffects(team2.getChar2());
     }
 
     // Just for flushing the output on the terminal and making it look nicer
