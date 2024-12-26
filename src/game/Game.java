@@ -35,7 +35,8 @@ public class Game {
                     System.out.println("Assassins: Mortem, Torva");
                     System.out.println("Archers: Cito, Sagitta");
                     System.out.println("Fighters: Tigris, Ursi");
-                    System.out.println("Healers: Nutrix, Sanita\n");
+                    System.out.println("Healers: Nutrix, Sanita");
+                    System.out.println("Wizards: Kanzo, Ulra\n");
 
                     Team team1 = Team.createTeam(input, 0);
                     clearScreen();
@@ -45,8 +46,8 @@ public class Game {
                     System.out.println("Assassins: Mortem, Torva");
                     System.out.println("Archers: Cito, Sagitta");
                     System.out.println("Fighters: Tigris, Ursi");
-                    System.out.println("Healers: Nutrix, Sanita\n");
-
+                    System.out.println("Healers: Nutrix, Sanita");
+                    System.out.println("Wizards: Kanzo, Ulra\n");
                     Team team2 = Team.createTeam(input, 200);
                     clearScreen();
                     // Implementing weather and map effects.
@@ -286,6 +287,8 @@ public class Game {
             return fighterSpecialAbility(input, fighter);
         } else if (character instanceof Healer healer) {
             return healerSpecialAbility(input, healer, allyTeam);
+        } else if (character instanceof Wizard wizard) {
+            return wizardSpecialAbility(input, wizard, opponentTeam);
         }
 
         return true;
@@ -469,6 +472,32 @@ public class Game {
             }
         }
     }
+    private static boolean wizardSpecialAbility(Scanner input, Wizard wizard, Team opponentTeam) {
+        while (true) {
+            System.out.println("Which of the following special moves would you like to perform?");
+            System.out.println("(1) Activate Explosion");
+            System.out.println("(2) Return to Action menu");
+
+            String choice = input.nextLine();
+            clearScreen();
+            switch (choice) {
+                case "1" -> {
+                    if (!wizard.isExplosionActive()) {
+                        wizard.activateExplosion(opponentTeam.getChar1(), opponentTeam.getChar2());
+                        return true;
+                    } else {
+                        System.out.println(wizard.getClass().getSimpleName() + " has already used Explosion!");
+                        return false;
+                    }
+                }
+                case "2" -> {
+                    return false;
+                }
+                default -> System.out.println("Invalid choice. Please select a valid input.\n");
+            }
+        }
+    }
+
 
     // ------------------HELPER METHODS------------------//
     // Displays the current state of the game

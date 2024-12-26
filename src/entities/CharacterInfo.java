@@ -95,7 +95,7 @@ public class CharacterInfo {
 
                 case "tigris":
                     System.out.println("""
-                             A juggernaut of strength and resilience, Tigris charges into battle with relentless fury. His sheer
+                            A juggernaut of strength and resilience, Tigris charges into battle with relentless fury. His sheer
                                                                                                                  power and endurance make him a force to be reckoned with.
 
                             Damage: 35 DMG

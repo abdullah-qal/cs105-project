@@ -1,3 +1,7 @@
+package utilities;
+
+import entities.Character;
+
 public class FoggyWeather extends Weather {
     public FoggyWeather() {
         super("Foggy", "Increases Assassin’s damage by 10, increases Archer’s defense by 5; decreases Fighter’s defense by 10, decreases Healer’s healing by 5.");

@@ -1,3 +1,7 @@
+package utilities;
+
+import entities.Character;
+
 public class WindyWeather extends Weather {
     public WindyWeather() {
         super("Windy", "Decreases Assassin’s movement speed by 5, decreases Archer’s damage by 10; increases Fighter’s defense by 10, increases Healer’s healing by 5.");
