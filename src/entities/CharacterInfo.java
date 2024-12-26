@@ -11,7 +11,8 @@ public class CharacterInfo {
             System.out.println("Assassins: Mortem, Torva");
             System.out.println("Archers: Cito, Sagitta");
             System.out.println("Fighters: Tigris, Ursi");
-            System.out.println("Healers: Nutrix, Sanita\n");
+            System.out.println("Healers: Nutrix, Sanita");
+            System.out.println("Wizards: Kanzo, Ulra\n");
 
             System.out.println("Which character would you like to learn more about? (Type q to return)");
             String choice = input.nextLine().toLowerCase();
@@ -22,7 +23,7 @@ public class CharacterInfo {
             }
 
             clearScreen();
-            // TODO: make this more maintainable by defining constants for these values in
+            // TODO: Make this more maintainable by defining constants for these values in
             // the respective Character classes
             switch (choice) {
                 case "mortem":
@@ -94,8 +95,8 @@ public class CharacterInfo {
 
                 case "tigris":
                     System.out.println("""
-                            A juggernaut of strength and resilience, Tigris charges into battle with relentless fury. His sheer
-                            power and endurance make him a force to be reckoned with
+                             A juggernaut of strength and resilience, Tigris charges into battle with relentless fury. His sheer
+                                                                                                                 power and endurance make him a force to be reckoned with.
 
                             Damage: 35 DMG
                             Max health: 350 HP
@@ -159,6 +160,38 @@ public class CharacterInfo {
                             Healing Amount: 50 HP
                             Divine Heal Rate: 5%
                             Special Abilities: Heal
+                            """);
+                    break;
+
+                case "kanzo":
+                    System.out.println("""
+                            A wizard with the ultimate sacrificial ability, Kanzo unleashes devastating power
+                            at the cost of his own life, halving the health of all enemies.
+
+                            Damage: 40 DMG
+                            Max health: 350 HP
+                            Defense: 30 DEF
+                            Movement Speed: 20 m/turn
+                            Range: 15 m
+                            Crit Rate: 10%
+                            Crit Damage: 50%
+                            Special Abilities: Explosion (Halves enemies' health, sacrifices self)
+                            """);
+                    break;
+
+                case "ulra":
+                    System.out.println("""
+                            Ulra wields powerful magic to unleash devastating explosions that deal significant
+                            damage to all enemies without sacrificing herself.
+
+                            Damage: 50 DMG
+                            Max health: 250 HP
+                            Defense: 20 DEF
+                            Movement Speed: 30 m/turn
+                            Range: 25 m
+                            Crit Rate: 15%
+                            Crit Damage: 40%
+                            Special Abilities: Explosion (Deals 100 damage to enemies)
                             """);
                     break;
 
