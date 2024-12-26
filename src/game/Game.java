@@ -50,6 +50,11 @@ public class Game {
                     System.out.println("Wizards: Kanzo, Ulra\n");
                     Team team2 = Team.createTeam(input, 200);
                     clearScreen();
+                    // Implementing map and weather effects on characters.
+                    selectedMap.applyEffects(team1.getCharacters());
+                    selectedMap.applyEffects(team2.getCharacters());
+                    currentWeather.applyEffects(team1.getCharacters());
+                    currentWeather.applyEffects(team2.getCharacters());
                     // Implementing weather and map effects.
                     selectedMap.applyEffects(team1.getCharacters());
                     selectedMap.applyEffects(team2.getCharacters());
@@ -73,6 +78,124 @@ public class Game {
                 }
             }
         }
+    }
+    // Map selection
+    private static Map selectMap(Scanner input) {
+        System.out.println("Select a map:");
+        System.out.println("(1) Desert");
+        System.out.println("(2) Garden");
+        System.out.println("(3) Mountain");
+
+        while (true) {
+            switch (input.nextLine()) {
+                case "1" -> {
+                    return new Desert();
+                }
+                case "2" -> {
+                    return new Garden();
+                }
+                case "3" -> {
+                    return new Mountain();
+                }
+                default -> System.out.println("Invalid choice. Please select a valid map.");
+            }
+        }
+    }
+    // A method for user to select map.
+    private static Map selectMap(Scanner input) {
+        System.out.println("Select a map:");
+        System.out.println("(1) Desert");
+        System.out.println("(2) Garden");
+        System.out.println("(3) Mountain");
+
+        while (true) {
+            switch (input.nextLine()) {
+                case "1" -> {
+                    return new Desert();
+                }
+                case "2" -> {
+                    return new Garden();
+                }
+                case "3" -> {
+                    return new Mountain();
+                }
+                default -> System.out.println("Invalid choice. Please select a valid map.");
+            }
+        }
+    }
+
+    // Manages the game loop
+    private static void gameCommences(Team team1, Team team2) {
+        Scanner input = new Scanner(System.in);
+        int turn = 1;
+    
+        while (true) {
+            System.out.println("|-------- TURN " + turn + " --------|");
+    
+            // Team 1 plays
+            if (!takeTurn(input, team1, team2, "Team 1")) {
+                System.out.println("Team 1 wins! The game lasted for " + turn + " turns.");
+                break;
+            }
+    
+            // Team 2 plays
+            if (!takeTurn(input, team2, team1, "Team 2")) {
+                System.out.println("Team 2 wins! The game lasted for " + turn + " turns.");
+                break;
+            }
+    
+            reduceCooldowns(team1, team2);
+    
+            displayGameState(team1, team2);
+            if (!promptToContinue(input)) {
+                System.out.println("Thanks for playing!");
+                break;
+            }
+    
+            turn++;
+        }
+    }
+    
+    private static boolean takeTurn(Scanner input, Team currentTeam, Team opponentTeam, String teamName) {
+        System.out.println(teamName + " to play.");
+        while (true) {
+
+            System.out.println("Select a character:");
+            System.out.printf("(1) %s (%s) - %.2f/%.2f HP%n",
+                    currentTeam.getChar1().getClass().getSimpleName(),
+                    currentTeam.getChar1().getClass().getSuperclass().getSimpleName(),
+                    entities.Character.normalisedValue(currentTeam.getChar1().getHealth()),
+                    entities.Character.normalisedValue(currentTeam.getChar1().getMaxHealth()));
+            System.out.printf("(2) %s (%s) - %.2f/%.2f HP%n",
+                    currentTeam.getChar2().getClass().getSimpleName(),
+                    currentTeam.getChar2().getClass().getSuperclass().getSimpleName(),
+                    entities.Character.normalisedValue(currentTeam.getChar2().getHealth()),
+                    entities.Character.normalisedValue(currentTeam.getChar2().getMaxHealth()));
+            
+            String choice = input.nextLine();
+            clearScreen();
+    
+            entities.Character selectedChar = switch (choice) {
+                case "1" -> currentTeam.getChar1();
+                case "2" -> currentTeam.getChar2();
+                default -> null;
+            };
+    
+            if (selectedChar == null) {
+                System.out.println("Invalid choice. Please select a valid input.\n");
+                continue;
+            }
+    
+            if (!selectedChar.isLiving_status()) {
+                System.out.println(selectedChar.getClass().getSimpleName() + " is already dead! Choose a different character\n");
+                continue;
+            }
+    
+            if (performAction(input, selectedChar, currentTeam, opponentTeam)) {
+                break;
+            }
+        }
+        return opponentTeam.isTeamAlive();
     }
     // Map selection
     private static Map selectMap(Scanner input) {
